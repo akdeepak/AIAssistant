@@ -1,0 +1,85 @@
+import reflex as rx
+
+from chat_app.states.chat_state import ChatState
+
+
+def template_card(
+    image_src: str,
+    title: str,
+    description: str,
+    tag_color: str = "purple-500",
+) -> rx.Component:
+    """Large template-style card with image, title, and tag.
+
+    Clicking the card still sends the description as the message.
+    """
+
+    return rx.el.button(
+        # Outer card container
+        rx.el.div(
+            # Top image area
+            rx.el.img(
+                src=image_src,
+                class_name="w-full h-40 object-cover rounded-t-3xl",
+            ),
+            # Bottom text area
+            rx.el.div(
+                rx.el.p(
+                    title,
+                    class_name="text-lg md:text-xl font-medium text-gray-900",
+                    # class_name="text-base md:text-lg font-medium text-gray-900",
+                ),
+                rx.el.div(
+                    rx.el.span(
+                        class_name=f"inline-flex h-3 w-3 rounded-full bg-{tag_color} mr-2",
+                    ),
+                    rx.el.span(
+                        description,
+                        class_name="text-xs font-medium text-gray-500",
+                    ),
+                    class_name="flex items-center gap-2 mt-2",
+                ),
+                class_name="px-4 py-3",
+            ),
+            class_name=(
+                "bg-white rounded-2xl shadow-sm border flex flex-col text-left "
+                "overflow-hidden hover:shadow-md transition-shadow"
+            ),
+        ),
+        on_click=ChatState.send_message({"message": description}),
+        type="button",
+        class_name="w-[70%] mx-auto focus:outline-none",
+        # class_name="w-full focus:outline-none",
+    )
+
+
+def preset_cards() -> rx.Component:
+    return rx.el.div(
+        rx.el.div(
+            rx.el.div(
+                rx.icon("bot", size=24),
+                class_name="rounded-full bg-whit p-2 size-10 inline-flex items-center justify-center border",
+            ),
+            rx.el.p(
+                "Instanda AI Agentic Assitant ",
+                class_name="text-2xl md:text-3xl font-medium",
+            ),
+            class_name="text-black flex flex-row gap-4 items-center mb-6",
+        ),
+        rx.el.div(
+            template_card(
+                "/fleetassistant.png",
+                "Fleet AI Assistant",
+                "An AI-powered assistant that instantly answers questions about fleet insurance policies, endorsements, and coverage",
+                "purple-500",
+            ),
+            template_card(
+                "/policyassitant.png",
+                "Policy AI Assistant",
+                "An AI-powered assistant that instantly answers questions about insurance policies, endorsements, and coverage",
+                "purple-500",
+            ),
+            class_name="gap-8 grid grid-cols-1 lg:grid-cols-2 w-full",
+        ),
+        class_name="top-1/3 left-1/2 absolute flex flex-col justify-center items-center gap-8 w-full max-w-[72rem] transform -translate-x-1/2 -translate-y-1/2 px-6",
+    )
