@@ -1,6 +1,53 @@
 import asyncio
+import json
+from pathlib import Path
 
 import reflex as rx
+
+
+TEMPLATES_JSON_PATH = (
+    Path(__file__).resolve().parent.parent / "assets" / "assistant_templates.json"
+)
+
+
+def _append_assistant_template(name: str, description: str) -> None:
+    """Append a new assistant definition to the templates JSON file.
+
+    If the file does not exist or is invalid, it will be (re)created.
+    """
+
+    templates: list[dict]
+    try:
+        if TEMPLATES_JSON_PATH.exists():
+            with TEMPLATES_JSON_PATH.open("r", encoding="utf-8") as f:
+                data = json.load(f)
+                templates = data if isinstance(data, list) else []
+        else:
+            templates = []
+    except (OSError, json.JSONDecodeError):
+        templates = []
+
+    # Simple slug for image name, e.g. "Fleet AI Assistant" -> "/fleetaiassistant.png"
+    slug = "".join(ch.lower() for ch in name if ch.isalnum()) or "assistant"
+    image_src = f"/{slug}.png"
+
+    new_entry = {
+        "image_src": image_src,
+        "title": name,
+        "description": description,
+        "tag_color": "purple-500",
+    }
+
+    templates.append(new_entry)
+
+    try:
+        TEMPLATES_JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with TEMPLATES_JSON_PATH.open("w", encoding="utf-8") as f:
+            json.dump(templates, f, indent=2)
+    except OSError:
+        # If saving fails, we silently ignore for now.
+        # The UI flow should still complete.
+        return
 
 
 class LayoutState(rx.State):
@@ -62,6 +109,16 @@ class LayoutState(rx.State):
         """Simulate assistant creation, then mark as created."""
 
         await asyncio.sleep(2)
+
+        # Capture current assistant details outside of the state lock
+        async with self:
+            name = self.assistant_name
+            description = self.assistant_description
+
+        # Persist the new assistant definition into the JSON file
+        _append_assistant_template(name, description)
+
+        # Now update UI state to reflect completion
         async with self:
             self.creating_assistant = False
             self.assistant_created = True

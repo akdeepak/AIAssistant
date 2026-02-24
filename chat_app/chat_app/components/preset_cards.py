@@ -1,6 +1,28 @@
+import json
+from pathlib import Path
+
 import reflex as rx
 
 from chat_app.states.chat_state import ChatState
+
+
+TEMPLATES_JSON_PATH = (
+    Path(__file__).resolve().parent.parent / "assets" / "assistant_templates.json"
+)
+
+
+def load_templates() -> list[dict]:
+    try:
+        with TEMPLATES_JSON_PATH.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data if isinstance(data, list) else []
+    except FileNotFoundError:
+        return []
+    except json.JSONDecodeError:
+        return []
+
+
+TEMPLATE_CARDS = load_templates()
 
 
 def template_card(
@@ -67,18 +89,15 @@ def preset_cards() -> rx.Component:
             class_name="text-black flex flex-row gap-4 items-center mb-6",
         ),
         rx.el.div(
-            template_card(
-                "/fleetassistant.png",
-                "Fleet AI Assistant",
-                "An AI-powered assistant that instantly answers questions about fleet insurance policies, endorsements, and coverage",
-                "purple-500",
-            ),
-            template_card(
-                "/policyassitant.png",
-                "Policy AI Assistant",
-                "An AI-powered assistant that instantly answers questions about insurance policies, endorsements, and coverage",
-                "purple-500",
-            ),
+            *[
+                template_card(
+                    card.get("image_src", ""),
+                    card.get("title", ""),
+                    card.get("description", ""),
+                    card.get("tag_color", "purple-500"),
+                )
+                for card in TEMPLATE_CARDS
+            ],
             class_name="gap-8 grid grid-cols-1 lg:grid-cols-2 w-full",
         ),
         class_name="top-1/3 left-1/2 absolute flex flex-col justify-center items-center gap-8 w-full max-w-[72rem] transform -translate-x-1/2 -translate-y-1/2 px-6",
