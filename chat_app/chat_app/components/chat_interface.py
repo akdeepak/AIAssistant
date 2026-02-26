@@ -16,7 +16,10 @@ def chat_interface() -> rx.Component:
                     rx.icon("arrow-left"),
                     rx.el.span("Back", class_name="ml-2"),
                     on_click=ChatState.clear_messages,
-                    class_name="flex items-center gap-2 px-4 py-2 mb-2 bg-white border rounded-lg shadow-sm hover:bg-gray-100 w-fit mt-4 ml-4",
+                    class_name=(
+                        "flex items-center gap-2 px-4 py-2 mb-2 bg-white border "
+                        "rounded-lg shadow-sm hover:bg-gray-100 w-fit mt-4 ml-4"
+                    ),
                 ),
                 rx.auto_scroll(
                     rx.foreach(

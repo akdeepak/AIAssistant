@@ -151,6 +151,7 @@ def assistant_page() -> rx.Component:
                         "w-full rounded-xl border border-gray-300 px-3 py-2 "
                         "focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     ),
+                    on_change=LayoutState.set_assistant_name,
                     required=True,
                 ),
                 class_name="mb-4",
@@ -169,6 +170,7 @@ def assistant_page() -> rx.Component:
                         "w-full rounded-xl border border-gray-300 px-3 py-2 min-h-[6rem] "
                         "focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     ),
+                    on_change=LayoutState.set_assistant_description,
                     required=True,
                 ),
                 class_name="mb-4",
@@ -238,17 +240,30 @@ def assistant_page() -> rx.Component:
                         "boxShadow": "0 1px 2px rgba(0, 0, 0, 0.05)",
                     },
                 ),
+                # Show selected file names below the drop area
+                rx.el.ul(
+                    rx.foreach(
+                        rx.selected_files("assistant_upload"),
+                        lambda name: rx.el.li(
+                            name,
+                            class_name="text-sm text-gray-700",
+                        ),
+                    ),
+                    class_name="mt-2 list-disc list-inside",
+                ),
                 class_name="mb-6",
             ),
             rx.el.button(
                 "Create Assistant",
-                type="submit",
+                type="button",
+                on_click=LayoutState.submit_assistant(
+                    rx.upload_files(upload_id="assistant_upload")
+                ),
                 class_name=(
                     "inline-flex items-center justify-center px-4 py-2 rounded-full "
                     "bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition-colors"
                 ),
             ),
-            on_submit=LayoutState.submit_assistant,
             class_name="bg-white rounded-3xl shadow-sm border p-6 flex flex-col",
         ),
         rx.el.div(),

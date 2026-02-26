@@ -22,9 +22,6 @@ def load_templates() -> list[dict]:
         return []
 
 
-TEMPLATE_CARDS = load_templates()
-
-
 def template_card(
     image_src: str,
     title: str,
@@ -70,20 +67,24 @@ def template_card(
         ),
         on_click=ChatState.send_message({"message": description}),
         type="button",
-        class_name="w-[70%] mx-auto focus:outline-none",
-        # class_name="w-full focus:outline-none",
+        class_name="w-full max-w-md focus:outline-none",
     )
 
 
 def preset_cards() -> rx.Component:
+    templates = load_templates()
+
     return rx.el.div(
         rx.el.div(
             rx.el.div(
                 rx.icon("bot", size=24),
-                class_name="rounded-full bg-whit p-2 size-10 inline-flex items-center justify-center border",
+                class_name=(
+                    "rounded-full bg-white p-2 size-10 inline-flex items-center "
+                    "justify-center border"
+                ),
             ),
             rx.el.p(
-                "Instanda AI Agentic Assitant ",
+                "Instanda AI Agentic Assistant",
                 class_name="text-2xl md:text-3xl font-medium",
             ),
             class_name="text-black flex flex-row gap-4 items-center mb-6",
@@ -96,9 +97,12 @@ def preset_cards() -> rx.Component:
                     card.get("description", ""),
                     card.get("tag_color", "purple-500"),
                 )
-                for card in TEMPLATE_CARDS
+                for card in templates
             ],
             class_name="gap-8 grid grid-cols-1 lg:grid-cols-2 w-full",
         ),
-        class_name="top-1/3 left-1/2 absolute flex flex-col justify-center items-center gap-8 w-full max-w-[72rem] transform -translate-x-1/2 -translate-y-1/2 px-6",
+        class_name=(
+            "flex flex-col justify-center items-start gap-8 w-full max-w-[72rem] "
+            "mx-auto px-12 py-12"
+        ),
     )

@@ -10,11 +10,6 @@
     "title": "Policy AI Assistant",
     "description": "An AI-powered assistant that instantly answers questions about insurance policies, endorsements, and coverage",
     "tag_color": "purple-500"
-  },
-  {
-    "image_src": "/testbot.png",
-    "title": "Test Bot",
-    "description": "Test Bot to initially check the data is stored into the json file",
-    "tag_color": "purple-500"
   }
+
 ]
