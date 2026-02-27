@@ -30,7 +30,7 @@ def ai_bubble(message: str, is_last: bool = False) -> rx.Component:
                 "shadow-sm max-w-[90%]"
             ),
         ),
-        class_name="flex flex-row items-start gap-3 text-black w-full",
+        class_name="flex flex-row items-start gap-3 text-black max-w-3xl",
     )
 
 
@@ -45,10 +45,10 @@ def user_bubble(message: str) -> rx.Component:
             rx.el.p(message, class_name="text-sm sm:text-base"),
             class_name=(
                 "text-white px-3 py-2 bg-blue-500 rounded-2xl w-fit max-w-[90%] "
-                "ml-auto shadow-sm"
+                "ml-auto mr-12 shadow-sm"
             ),
         ),
-        class_name="flex flex-row items-start gap-3 text-black w-full",
+        class_name="flex flex-row items-start gap-3 text-black max-w-3xl",
     )
 
 
@@ -61,5 +61,5 @@ def message_bubble(
             ai_bubble(message, is_last),
             user_bubble(message),
         ),
-        class_name="w-full flex flex-col gap-4",
+        class_name="w-full flex flex-col gap-4 mx-auto max-w-3xl px-6",
     )
