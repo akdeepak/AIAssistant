@@ -13,36 +13,59 @@ TEMPLATES_JSON_PATH = (
 INGEST_URL = "http://localhost:9000/llama-faq/ingest"
 
 
-def _append_assistant_template(
-    name: str,
-    description: str,
-    knowledge_base_id: str | None = None,
-    source_file: str | None = None,
-    kb_message: str | None = None,
-    kb_documents: int | None = None,
-) -> None:
-    """Append a new assistant definition to the templates JSON file.
+def _load_templates_from_file() -> list[dict]:
+    """Load assistant templates from the JSON file.
 
-    If the file does not exist or is invalid, it will be (re)created.
+    Used to initialise in-memory state; tolerant of missing/invalid files.
     """
 
-    templates: list[dict]
     try:
         if TEMPLATES_JSON_PATH.exists():
             with TEMPLATES_JSON_PATH.open("r", encoding="utf-8") as f:
                 data = json.load(f)
-                templates = data if isinstance(data, list) else []
-        else:
-            templates = []
+                return data if isinstance(data, list) else []
+        return []
     except (OSError, json.JSONDecodeError):
-        templates = []
+        return []
 
-    # Simple slug for image name, e.g. "Fleet AI Assistant" -> "/fleetaiassistant.png"
-    slug = "".join(ch.lower() for ch in name if ch.isalnum()) or "assistant"
-    image_src = f"/{slug}.png"
+
+def _append_assistant_template(
+    name: str,
+    description: str,
+    image_src: str | None = None,
+    knowledge_base_id: str | None = None,
+    source_file: str | None = None,
+    kb_message: str | None = None,
+    kb_documents: int | None = None,
+) -> dict | None:
+    """Append a new assistant definition to the templates JSON file.
+
+    Returns the new entry dict on success so callers can also update
+    in-memory state used by the UI. If persisting fails, returns None.
+    """
+
+    templates = _load_templates_from_file()
+
+    # Determine image source for persistence:
+    # - If an explicit image_src is provided, normalise values coming from
+    #   the upload handler so that we do not persist the `/_upload` prefix
+    #   into the templates JSON. Instead we store "/<filename>.png" which
+    #   matches the convention used by the built-in templates.
+    # - Otherwise, fall back to a slug-based filename.
+    if image_src is not None and image_src != "":
+        if image_src.startswith("/_upload/"):
+            # Keep only the file name and point to the root path, e.g.
+            # "/_upload/instanda_logo1.png" -> "/instanda_logo1.png".
+            effective_image_src = f"/{Path(image_src).name}"
+        else:
+            effective_image_src = image_src
+    else:
+        # Simple slug for image name, e.g. "Fleet AI Assistant" -> "/fleetaiassistant.png"
+        slug = "".join(ch.lower() for ch in name if ch.isalnum()) or "assistant"
+        effective_image_src = f"/{slug}.png"
 
     new_entry: dict = {
-        "image_src": image_src,
+        "image_src": effective_image_src,
         "title": name,
         "description": description,
         "tag_color": "purple-500",
@@ -67,7 +90,12 @@ def _append_assistant_template(
     except OSError:
         # If saving fails, we silently ignore for now.
         # The UI flow should still complete.
-        return
+        return None
+
+    return new_entry
+
+
+INITIAL_TEMPLATES: list[dict] = _load_templates_from_file()
 
 
 class LayoutState(rx.State):
@@ -81,6 +109,7 @@ class LayoutState(rx.State):
     # Store latest Assistant configuration (optional, for future use).
     assistant_name: str = ""
     assistant_description: str = ""
+    assistant_image_src: str = ""
 
     # Status flags for Assistant creation flow.
     creating_assistant: bool = False
@@ -93,6 +122,12 @@ class LayoutState(rx.State):
     # Files uploaded for the assistant's knowledge base (filenames only for UI).
     uploaded_files: list[str] = []
 
+    # In-memory cache of assistant templates shown on the dashboard.
+    # This is initialised from the JSON file on startup and updated when
+    # new assistants are created so the UI reflects changes without
+    # requiring a server restart.
+    assistant_templates: list[dict] = INITIAL_TEMPLATES
+
     @rx.event
     def set_assistant_name(self, value: str):
         """Update assistant name as the user types."""
@@ -104,6 +139,34 @@ class LayoutState(rx.State):
         """Update assistant description as the user types."""
 
         self.assistant_description = value.strip()
+
+    @rx.event
+    async def handle_image_upload(self, files: list[rx.UploadFile]):
+        """Handle upload of the assistant image and store its served URL."""
+
+        if not files:
+            return
+
+        first = files[0]
+        # Save the image file to the upload dir and record its URL.
+        upload_dir = rx.get_upload_dir()
+        upload_dir.mkdir(parents=True, exist_ok=True)
+
+        file_name = getattr(first, "name", None) or getattr(
+            first, "filename", "assistant_image"
+        )
+        file_bytes = await first.read()
+
+        file_path = upload_dir / file_name
+        try:
+            with file_path.open("wb") as f:
+                f.write(file_bytes)
+        except OSError:
+            return
+
+        # Store a plain string URL path for the uploaded image.
+        # Uploaded files are served from the `/_upload` mount point.
+        self.assistant_image_src = f"/_upload/{file_path.name}"
 
     @rx.event
     def set_page(self, page: str):
@@ -123,6 +186,7 @@ class LayoutState(rx.State):
         self.assistant_dialog_open = False
         self.assistant_dialog_message = ""
         self.uploaded_files = []
+        self.assistant_image_src = ""
 
     @rx.event
     def set_uploaded_files(self, files: list[rx.UploadFile] | None):
@@ -188,14 +252,21 @@ class LayoutState(rx.State):
                 return
 
         # Persist the new assistant definition into the JSON file including KB metadata
-        _append_assistant_template(
+        new_entry = _append_assistant_template(
             self.assistant_name,
             self.assistant_description,
+            image_src=self.assistant_image_src or None,
             knowledge_base_id=knowledge_base_id,
             source_file=source_file,
             kb_message=kb_message,
             kb_documents=kb_documents,
         )
+
+        # If persistence succeeded, also update the in-memory list so that
+        # the dashboard sees the new assistant immediately without a
+        # Reflex server restart.
+        if new_entry is not None:
+            self.assistant_templates.append(new_entry)
 
         # Mark as created and update dialog
         self.creating_assistant = False

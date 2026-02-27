@@ -46,7 +46,11 @@ def input_area() -> rx.Component:
                 on_submit=ChatState.send_message,
                 class_name="flex flex-col gap-2",
             ),
-            class_name="rounded-3xl bg-background w-full border px-3 py-1 shadow-sm mx-auto z-10 focus-within:ring-blue-100 focus-within:ring-2 focus-within:shadow-none bg-white",
+            class_name=(
+                "rounded-3xl bg-background w-full border px-3 py-1 "
+                "shadow-sm max-w-3xl mx-auto z-10 focus-within:ring-blue-100 "
+                "focus-within:ring-2 focus-within:shadow-none bg-white px-3"
+            ),
         ),
-        class_name="px-6 fixed bottom-6 left-0 right-0 max-w-3xl mx-auto",
+        class_name="px-6 fixed bottom-6 left-0 right-0",
     )

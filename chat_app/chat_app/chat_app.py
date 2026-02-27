@@ -1,5 +1,6 @@
 import reflex as rx
 from chat_app.components.chat_interface import chat_interface
+from chat_app.components.preset_cards import preset_cards
 from chat_app.states.layout_state import LayoutState
 
 
@@ -175,6 +176,52 @@ def assistant_page() -> rx.Component:
                 ),
                 class_name="mb-4",
             ),
+            # Assistant image upload (for card image_src)
+            rx.el.div(
+                rx.el.label(
+                    "Assistant Image",
+                    class_name="block text-sm font-medium text-gray-700 mb-2",
+                ),
+                rx.upload(
+                    rx.vstack(
+                        rx.button(
+                            "Select Image",
+                            color="rgb(37,99,235)",
+                            bg="white",
+                            border="1px solid rgb(37,99,235)",
+                        ),
+                        rx.text(
+                            "Drag and drop image here or click to select",
+                            style={"fontSize": "0.875rem", "color": "#4b5563"},
+                        ),
+                    ),
+                    id="assistant_image",
+                    max_files=1,
+                    accept={
+                        "image/png": [".png"],
+                        "image/jpeg": [".jpg", ".jpeg"],
+                        "image/gif": [".gif"],
+                        "image/webp": [".webp"],
+                    },
+                    on_drop=LayoutState.handle_image_upload(
+                        rx.upload_files(upload_id="assistant_image")
+                    ),
+                    border="1px dotted #60a5fa",
+                    padding="1.5rem",
+                    width="100%",
+                ),
+                rx.el.ul(
+                    rx.foreach(
+                        rx.selected_files("assistant_image"),
+                        lambda name: rx.el.li(
+                            name,
+                            class_name="text-sm text-gray-700",
+                        ),
+                    ),
+                    class_name="mt-2 list-disc list-inside",
+                ),
+                class_name="mb-4",
+            ),
             rx.el.div(
                 rx.el.label(
                     "Knowledge Base",
@@ -308,10 +355,19 @@ def assistant_page() -> rx.Component:
 
 
 def index() -> rx.Component:
-    """Dashboard page with the main chat interface."""
-    return rx.hstack(sidebar(), rx.box(chat_interface(), width="100%"))
+    """Dashboard page showing preset assistant templates only."""
+
+    return rx.hstack(sidebar(), rx.box(preset_cards(), width="100%"))
 
 
 app = rx.App(theme=rx.theme(appearance="light"))
 app.add_page(index, route="/", title="Dashboard")
+
+
+def chat_page() -> rx.Component:
+    """Dedicated chat page to continue conversations started from presets."""
+    return rx.hstack(sidebar(), rx.box(chat_interface(), width="100%"))
+
+
+app.add_page(chat_page, route="/chat", title="Chat")
 app.add_page(assistant_page, route="/assistant-studio", title="Assistant Studio")

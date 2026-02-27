@@ -7,9 +7,12 @@
   },
   {
     "image_src": "/policyassitant.png",
-    "title": "Policy AI Assistant",
-    "description": "An AI-powered assistant that instantly answers questions about insurance policies, endorsements, and coverage",
-    "tag_color": "purple-500"
+    "title": "Test Assistant",
+    "description": "TEst Assistant is performed to answer the questions on the broker FAQ document.",
+    "tag_color": "purple-500",
+    "knowledge_base_id": "3cc37986-8a06-427f-98d8-c47ba2de15de",
+    "source_file": "Broker_FAQ_Testing.docx",
+    "kb_message": "Successfully ingested Broker_FAQ_Testing.docx",
+    "kb_documents": 1
   }
-
 ]

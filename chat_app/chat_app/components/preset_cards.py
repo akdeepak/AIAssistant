@@ -1,25 +1,7 @@
-import json
-from pathlib import Path
-
 import reflex as rx
 
 from chat_app.states.chat_state import ChatState
-
-
-TEMPLATES_JSON_PATH = (
-    Path(__file__).resolve().parent.parent / "assets" / "assistant_templates.json"
-)
-
-
-def load_templates() -> list[dict]:
-    try:
-        with TEMPLATES_JSON_PATH.open("r", encoding="utf-8") as f:
-            data = json.load(f)
-            return data if isinstance(data, list) else []
-    except FileNotFoundError:
-        return []
-    except json.JSONDecodeError:
-        return []
+from chat_app.states.layout_state import LayoutState
 
 
 def template_card(
@@ -27,13 +9,16 @@ def template_card(
     title: str,
     description: str,
     tag_color: str = "purple-500",
+    knowledge_base_id: str | None = None,
 ) -> rx.Component:
     """Large template-style card with image, title, and tag.
 
-    Clicking the card still sends the description as the message.
+    Clicking the card selects the assistant (knowledge base) and
+    navigates to the dedicated chat page, where the user can then
+    type their question.
     """
 
-    return rx.el.button(
+    button = rx.el.button(
         # Outer card container
         rx.el.div(
             # Top image area
@@ -65,15 +50,21 @@ def template_card(
                 "overflow-hidden hover:shadow-md transition-shadow"
             ),
         ),
-        on_click=ChatState.send_message({"message": description}),
+        # Select the assistant / knowledge base for subsequent chat
+        # requests. The actual question will be whatever the user
+        # types into the input area on the /chat page.
+        on_click=ChatState.select_assistant(knowledge_base_id),
         type="button",
         class_name="w-full max-w-md focus:outline-none",
     )
 
+    # Wrap the button in a link so that clicking a preset both seeds
+    # the conversation and navigates to the chat page where the user
+    # can continue chatting.
+    return rx.link(button, href="/chat", underline="none")
+
 
 def preset_cards() -> rx.Component:
-    templates = load_templates()
-
     return rx.el.div(
         rx.el.div(
             rx.el.div(
@@ -90,15 +81,16 @@ def preset_cards() -> rx.Component:
             class_name="text-black flex flex-row gap-4 items-center mb-6",
         ),
         rx.el.div(
-            *[
-                template_card(
-                    card.get("image_src", ""),
-                    card.get("title", ""),
-                    card.get("description", ""),
+            rx.foreach(
+                LayoutState.assistant_templates,
+                lambda card, i: template_card(
+                    card["image_src"],
+                    card["title"],
+                    card["description"],
                     card.get("tag_color", "purple-500"),
-                )
-                for card in templates
-            ],
+                    card.get("knowledge_base_id"),
+                ),
+            ),
             class_name="gap-8 grid grid-cols-1 lg:grid-cols-2 w-full",
         ),
         class_name=(
