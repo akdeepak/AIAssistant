@@ -19,26 +19,34 @@ def chat_interface() -> rx.Component:
                     i == ChatState.messages.length() - 1,
                 ),
             ),
-            class_name="flex flex-col gap-4 pb-24 pt-6",
-            # class_name="text-gray-500 text-sm mt-8 text-center"
+            class_name="flex flex-col gap-5 pb-32 pt-6 px-2",
         ),
         rx.el.div(
+            rx.icon("message-circle", size=40, class_name="text-gray-300 mb-3"),
             rx.el.p(
-                "Start a conversation by typing a message below.",
-                class_name="text-gray-500 text-sm mt-8 text-center",
+                "Start a conversation",
+                class_name="text-gray-500 text-base font-medium",
             ),
-            class_name="flex flex-col gap-4 pb-24 pt-6",
+            rx.el.p(
+                "Type a message below to begin.",
+                class_name="text-gray-400 text-sm",
+            ),
+            class_name="flex flex-col flex-1 items-center justify-center gap-1",
         ),
     )
 
     return rx.el.div(
-        # Centered chat column for messages.
+        # Full-width scrollable wrapper — scrollbar hugs the right edge
         rx.el.div(
-            main_section,
-            class_name="flex flex-col flex-1 max-w-[720px] mx-auto px-4 w-full",
+            # Centered content column inside the full-width scroller
+            rx.el.div(
+                main_section,
+                class_name="max-w-[1000px] mx-auto px-4 w-full flex flex-col flex-1",
+            ),
+            class_name=(
+                "flex flex-col flex-1 overflow-y-auto custom-scrollbar w-full"
+            ),
         ),
-        # Input area uses the same max width and padding in its own
-        # wrapper so the question bubble and text area align.
         input_area(),
-        class_name="h-screen flex flex-col bg-gray-50 w-full",
+        class_name="h-screen flex flex-col bg-[#f5f5f5] w-full overflow-hidden",
     )
