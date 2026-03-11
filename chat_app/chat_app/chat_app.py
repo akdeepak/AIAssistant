@@ -1,6 +1,7 @@
 import reflex as rx
 from chat_app.components.chat_interface import chat_interface
 from chat_app.components.preset_cards import preset_cards
+from chat_app.states.chat_state import ChatState
 from chat_app.states.layout_state import LayoutState
 
 
@@ -521,8 +522,296 @@ def assistant_page() -> rx.Component:
     return rx.hstack(sidebar(), rx.box(content, width="100%"))
 
 
+# ── Agent Card Components ──────────────────────────────────────────────────────
+def agent_card(template: dict) -> rx.Component:
+    """Render a single clickable agent card that navigates to chat."""
+
+    # Status badge - green for LIVE, yellow for DRAFT
+    status_badge = rx.cond(
+        template["status"] == "LIVE",
+        rx.el.span(
+            "● LIVE",
+            class_name=(
+                "absolute top-3 left-3 px-2 py-0.5 text-[9px] font-bold "
+                "text-green-700 bg-green-400 rounded-full"
+            ),
+        ),
+        rx.el.span(
+            "● DRAFT",
+            class_name=(
+                "absolute top-3 left-3 px-2 py-0.5 text-[9px] font-bold "
+                "text-yellow-700 bg-yellow-400 rounded-full"
+            ),
+        ),
+    )
+
+    # Card content
+    card_content = rx.el.div(
+        # Gradient header with circular image avatar
+        rx.el.div(
+            status_badge,
+            rx.el.img(
+                src=template["image_src"],
+                class_name=(
+                    "absolute bottom-3 left-1/2 -translate-x-1/2 "
+                    "w-14 h-14 rounded-full object-cover border-2 border-white/40 shadow-md"
+                ),
+            ),
+            class_name="relative h-28 rounded-t-xl",
+            style={"background": template["gradient"]},
+        ),
+        # Card body
+        rx.el.div(
+            rx.el.h3(template["title"], class_name="text-sm font-semibold text-gray-900 mb-1"),
+            rx.el.p(
+                template["description"],
+                class_name="text-xs text-gray-500 leading-relaxed mb-4 line-clamp-2",
+            ),
+            rx.el.div(
+                rx.el.span(template["queries"], class_name="text-xs text-gray-400"),
+                rx.el.button(
+                    rx.icon("arrow-right", size=14, color="#9CA3AF"),
+                    class_name="ml-auto p-1.5 hover:bg-gray-100 rounded-full",
+                ),
+                class_name="flex items-center justify-between mt-auto",
+            ),
+            class_name="p-4 flex flex-col flex-1",
+        ),
+        class_name=(
+            "bg-white rounded-xl border border-gray-100 shadow-sm "
+            "hover:shadow-md transition-shadow overflow-hidden flex flex-col cursor-pointer"
+        ),
+        # Select the assistant when clicked
+        on_click=ChatState.select_assistant(template.get("knowledge_base_id")),
+    )
+
+    # Wrap in link to navigate to chat page
+    return rx.link(
+        card_content,
+        href="/chat",
+        class_name="block",
+    )
+
+
+def new_agent_card() -> rx.Component:
+    """Static card for creating a new agent."""
+    return rx.link(
+        rx.el.div(
+            rx.el.div(
+                rx.el.div(
+                    rx.icon("plus", size=20, color="#9CA3AF"),
+                    class_name=(
+                        "w-12 h-12 rounded-full border-2 border-dashed border-gray-300 "
+                        "flex items-center justify-center mb-3"
+                    ),
+                ),
+                rx.el.h3("New Agent", class_name="text-sm font-semibold text-gray-700 mb-1"),
+                rx.el.p("Start from scratch", class_name="text-xs text-gray-400"),
+                rx.el.p("or a template", class_name="text-xs text-gray-400"),
+                class_name="flex flex-col items-center justify-center h-full py-8",
+            ),
+            class_name=(
+                "bg-white rounded-xl border-2 border-dashed border-gray-200 "
+                "hover:border-gray-300 hover:bg-gray-50 transition-all "
+                "h-full min-h-[220px] flex items-center justify-center cursor-pointer"
+            ),
+        ),
+        href="/assistant-studio",
+        class_name="block h-full",
+    )
+
+
+# ── Dashboard Page ─────────────────────────────────────────────────────────────
+def dashboard_page() -> rx.Component:
+    """Dashboard with header bar, vibrant gradient hero, tabs, and dynamic agent cards."""
+
+    # ── Top Header Bar ─────────────────────────────────────────────
+    header_bar = rx.el.div(
+        # Left: Brand
+        rx.el.div(
+            rx.el.span("Instanda", class_name="text-lg font-bold text-gray-900"),
+            rx.el.span("/", class_name="mx-3 text-gray-300 text-lg"),
+            rx.el.span("AI Studio", class_name="text-lg font-normal text-gray-500"),
+            class_name="flex items-center",
+        ),
+        # Right: Search + New Agent
+        rx.el.div(
+            rx.el.div(
+                rx.icon("search", size=16, color="#9CA3AF"),
+                rx.el.input(
+                    placeholder="Search agents...",
+                    class_name=(
+                        "bg-transparent border-none outline-none text-sm text-gray-700 "
+                        "placeholder-gray-400 ml-2 w-full focus:outline-none"
+                    ),
+                ),
+                class_name=(
+                    "flex items-center px-4 py-2 bg-gray-100 rounded-full "
+                    "w-64 border border-gray-200"
+                ),
+            ),
+            rx.link(
+                rx.el.button(
+                    "+ New Agent",
+                    class_name=(
+                        "px-5 py-2.5 text-sm font-semibold text-white "
+                        "rounded-full hover:opacity-90 transition-opacity ml-4"
+                    ),
+                    style={
+                        "background": "linear-gradient(to right, #7c3aed, #3b82f6)",
+                    },
+                ),
+                href="/assistant-studio",
+            ),
+            class_name="flex items-center",
+        ),
+        class_name="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100",
+    )
+
+    # ── Hero Section ───────────────────────────────────────────────
+    hero_section = rx.el.div(
+        # Left content
+        rx.el.div(
+            rx.el.span(
+                "✦  AGENTIC AI PLATFORM",
+                class_name=(
+                    "inline-block px-4 py-1 text-[10px] font-bold tracking-[0.2em] "
+                    "text-white bg-white/15 backdrop-blur-sm rounded-full mb-3"
+                ),
+            ),
+            rx.el.h1(
+                rx.el.span("Your intelligent", class_name="block"),
+                rx.el.span("agents, deployed.", class_name="block"),
+                class_name="text-2xl md:text-3xl font-bold text-white leading-tight mb-2",
+            ),
+            rx.el.p(
+                "Build, configure, and launch AI assistants tailored to your "
+                "insurance products and workflows.",
+                class_name="text-white/80 text-sm leading-relaxed max-w-md mb-4",
+            ),
+            rx.el.div(
+                rx.link(
+                    rx.el.button(
+                        "Get Started",
+                        class_name=(
+                            "px-6 py-2.5 text-sm font-semibold text-purple-700 bg-white "
+                            "rounded-lg hover:bg-gray-100 transition-colors"
+                        ),
+                    ),
+                    href="/assistant-studio",
+                ),
+                rx.link(
+                    rx.el.button(
+                        "View Templates",
+                        class_name=(
+                            "px-6 py-2.5 text-sm font-semibold text-white "
+                            "bg-white/20 backdrop-blur-sm "
+                            "rounded-lg hover:bg-white/30 transition-colors ml-3"
+                        ),
+                    ),
+                    href="#",
+                ),
+                class_name="flex items-center",
+            ),
+            class_name="flex-1 z-10",
+        ),
+        # Right: Stats cards
+        rx.el.div(
+            rx.el.div(
+                rx.el.p(
+                    LayoutState.assistant_templates.length(),
+                    class_name="text-2xl font-bold text-white",
+                ),
+                rx.el.p("Agents\nLive", class_name="text-[10px] text-white/60 mt-0.5 text-center whitespace-pre-line"),
+                class_name=(
+                    "text-center px-4 py-3 bg-white/10 backdrop-blur-sm rounded-2xl "
+                    "border border-white/20"
+                ),
+            ),
+            rx.el.div(
+                rx.el.p("12k", class_name="text-2xl font-bold text-white"),
+                rx.el.p("Queries", class_name="text-[10px] text-white/60 mt-0.5"),
+                class_name=(
+                    "text-center px-4 py-3 bg-white/10 backdrop-blur-sm rounded-2xl "
+                    "border border-white/20"
+                ),
+            ),
+            rx.el.div(
+                rx.el.p("99%", class_name="text-2xl font-bold text-white"),
+                rx.el.p("Uptime", class_name="text-[10px] text-white/60 mt-0.5"),
+                class_name=(
+                    "text-center px-4 py-3 bg-white/10 backdrop-blur-sm rounded-2xl "
+                    "border border-white/20"
+                ),
+            ),
+            class_name="flex gap-3 z-10",
+        ),
+        class_name=(
+            "relative flex flex-col lg:flex-row items-start lg:items-center justify-between "
+            "gap-6 p-6 rounded-2xl mb-4 overflow-hidden"
+        ),
+        style={
+            "background": (
+                "linear-gradient(135deg, "
+                "#7c3aed 0%, #a855f7 25%, #c084fc 45%, "
+                "#e879a0 70%, #f59e42 100%)"
+            ),
+        },
+    )
+
+    # ── Tab Navigation ─────────────────────────────────────────────
+    tabs_section = rx.el.div(
+        rx.el.button(
+            "All Agents",
+            class_name="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-full",
+        ),
+        rx.el.button(
+            "Deployed",
+            class_name=(
+                "px-4 py-2 text-sm font-medium text-gray-600 bg-transparent "
+                "hover:bg-gray-100 rounded-full transition-colors"
+            ),
+        ),
+        rx.el.button(
+            "Drafts",
+            class_name=(
+                "px-4 py-2 text-sm font-medium text-gray-600 bg-transparent "
+                "hover:bg-gray-100 rounded-full transition-colors"
+            ),
+        ),
+        rx.el.button(
+            "Templates",
+            class_name=(
+                "px-4 py-2 text-sm font-medium text-gray-600 bg-transparent "
+                "hover:bg-gray-100 rounded-full transition-colors"
+            ),
+        ),
+        class_name="flex items-center gap-1 mb-4",
+    )
+
+    # ── Agent Cards Section (Dynamic from templates) ───────────────
+    agents_section = rx.el.div(
+        rx.foreach(LayoutState.assistant_templates, agent_card),
+        class_name="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl",
+    )
+
+    # ── Main Content ───────────────────────────────────────────────
+    content = rx.el.div(
+        header_bar,
+        rx.el.div(
+            hero_section,
+            tabs_section,
+            agents_section,
+            class_name="p-5",
+        ),
+        class_name="w-full bg-[#F3F0FF] h-screen overflow-hidden",
+    )
+
+    return rx.hstack(sidebar(), rx.box(content, width="100%"))
+
+
 def index() -> rx.Component:
-    return rx.hstack(sidebar(), rx.box(preset_cards(), width="100%"))
+    return dashboard_page()
 
 
 app = rx.App(theme=rx.theme(appearance="light"))

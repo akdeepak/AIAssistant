@@ -92,7 +92,7 @@ class ChatState(rx.State):
             # Call the backend chat endpoint with the selected
             # knowledge base and the user's query.
             response = requests.post(
-                "http://localhost:9000/knowledge-service/search",
+                "http://localhost:9000/ai-assistant/query",
                 json=payload,
                 timeout=60,
             )

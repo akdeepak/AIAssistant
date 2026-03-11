@@ -10,7 +10,7 @@ TEMPLATES_JSON_PATH = (
     Path(__file__).resolve().parent.parent / "assets" / "assistant_templates.json"
 )
 
-INGEST_URL = "http://localhost:9000/knowledge-service/catalyze"
+INGEST_URL = "http://localhost:9000/ai-assistant/catalyze"
 
 
 def _load_templates_from_file() -> list[dict]:
@@ -69,6 +69,10 @@ def _append_assistant_template(
         "title": name,
         "description": description,
         "tag_color": "purple-500",
+        "status": "LIVE",
+        "queries": "0",
+        "gradient": "linear-gradient(to bottom right, #a855f7, #6366f1, #3b82f6)",
+        "icon": "🤖",
     }
 
     # Include knowledge base metadata if available
@@ -193,6 +197,11 @@ class LayoutState(rx.State):
         self.assistant_dialog_message = ""
         self.uploaded_files = []
         self.assistant_image_src = ""
+
+    @rx.event
+    def load_templates(self):
+        """Reload assistant templates from disk — called on page load."""
+        self.assistant_templates = _load_templates_from_file()
 
     @rx.event
     def reset_studio(self):
