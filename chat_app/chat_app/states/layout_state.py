@@ -10,7 +10,7 @@ TEMPLATES_JSON_PATH = (
     Path(__file__).resolve().parent.parent / "assets" / "assistant_templates.json"
 )
 
-INGEST_URL = "http://localhost:9000/llama-faq/ingest"
+INGEST_URL = "http://localhost:9000/knowledge-service/catalyze"
 
 
 def _load_templates_from_file() -> list[dict]:
@@ -115,6 +115,10 @@ class LayoutState(rx.State):
     creating_assistant: bool = False
     assistant_created: bool = False
 
+    # Progress bar state for assistant creation.
+    creation_progress: int = 0
+    creation_step: str = ""
+
     # Alert dialog state for assistant creation flow.
     assistant_dialog_open: bool = False
     assistant_dialog_message: str = ""
@@ -183,10 +187,27 @@ class LayoutState(rx.State):
         self.show_assistant_upload = True
         self.creating_assistant = False
         self.assistant_created = False
+        self.creation_progress = 0
+        self.creation_step = ""
         self.assistant_dialog_open = False
         self.assistant_dialog_message = ""
         self.uploaded_files = []
         self.assistant_image_src = ""
+
+    @rx.event
+    def reset_studio(self):
+        """Reset all Assistant Studio state — called on page load."""
+        self.show_assistant_upload = False
+        self.assistant_name = ""
+        self.assistant_description = ""
+        self.assistant_image_src = ""
+        self.creating_assistant = False
+        self.assistant_created = False
+        self.creation_progress = 0
+        self.creation_step = ""
+        self.assistant_dialog_open = False
+        self.assistant_dialog_message = ""
+        self.uploaded_files = []
 
     @rx.event
     def set_uploaded_files(self, files: list[rx.UploadFile] | None):
@@ -210,17 +231,22 @@ class LayoutState(rx.State):
 
         self.creating_assistant = True
         self.assistant_created = False
+        self.creation_progress = 0
+        self.creation_step = "Validating configuration…"
+        yield
 
-        # Open alert dialog indicating that creation is in progress.
-        self.assistant_dialog_open = True
-        self.assistant_dialog_message = "Assistant creation in progress..."
+        # Step 1: Validate
+        await asyncio.sleep(0.6)
+        self.creation_progress = 15
+        self.creation_step = "Uploading files…"
+        yield
 
         knowledge_base_id: str | None = None
         kb_message: str | None = None
         kb_documents: int | None = None
         source_file: str | None = None
 
-        # Call external ingest API with the uploaded file, if provided
+        # Step 2: Upload and ingest knowledge base
         if files:
             first = files[0]
             try:
@@ -229,6 +255,10 @@ class LayoutState(rx.State):
                 )
                 file_bytes = await first.read()
                 source_file = str(file_name)
+
+                self.creation_progress = 35
+                self.creation_step = "Processing knowledge base…"
+                yield
 
                 response = requests.post(
                     INGEST_URL,
@@ -242,16 +272,28 @@ class LayoutState(rx.State):
                 knowledge_base_id = data.get("knowledge_base_id")
                 kb_message = data.get("message")
                 kb_documents = data.get("documents")
+
+                self.creation_progress = 70
+                self.creation_step = "Indexing documents…"
+                yield
             except Exception:
-                # If ingest fails, mark as failed and show a generic message.
                 self.creating_assistant = False
                 self.assistant_created = False
-                self.assistant_dialog_message = (
-                    "Assistant creation failed while ingesting knowledge base."
-                )
+                self.creation_progress = 0
+                self.creation_step = "Failed to ingest knowledge base."
+                yield
                 return
+        else:
+            self.creation_progress = 50
+            self.creation_step = "Configuring assistant…"
+            yield
 
-        # Persist the new assistant definition into the JSON file including KB metadata
+        # Step 3: Persist
+        await asyncio.sleep(0.4)
+        self.creation_progress = 85
+        self.creation_step = "Saving assistant…"
+        yield
+
         new_entry = _append_assistant_template(
             self.assistant_name,
             self.assistant_description,
@@ -262,17 +304,19 @@ class LayoutState(rx.State):
             kb_documents=kb_documents,
         )
 
-        # If persistence succeeded, also update the in-memory list so that
-        # the dashboard sees the new assistant immediately without a
-        # Reflex server restart.
         if new_entry is not None:
             self.assistant_templates.append(new_entry)
 
-        # Mark as created and update dialog
+        # Step 4: Complete
+        self.creation_progress = 100
+        self.creation_step = "Assistant created successfully!"
+        yield
+
+        await asyncio.sleep(1.0)
         self.creating_assistant = False
         self.assistant_created = True
-        self.assistant_dialog_message = "Assistant created successfully!"
-        # Hide the form once the assistant is successfully created
+        self.creation_progress = 0
+        self.creation_step = ""
         self.show_assistant_upload = False
 
     @rx.event
