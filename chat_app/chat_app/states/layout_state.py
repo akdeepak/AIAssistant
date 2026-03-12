@@ -12,6 +12,17 @@ TEMPLATES_JSON_PATH = (
 
 INGEST_URL = "http://localhost:9000/ai-assistant/catalyze"
 
+# Pool of distinct icons cycled through when creating new assistants.
+_ICON_POOL: list[str] = [
+    "🤖", "📋", "🧠", "💡", "🚀", "🔍", "📊", "🛡️",
+    "⚡", "🎯", "📚", "🔧", "💬", "🌐", "🏷️", "📎",
+]
+
+
+def _pick_icon(existing_count: int) -> str:
+    """Return an icon from the pool based on how many templates exist."""
+    return _ICON_POOL[existing_count % len(_ICON_POOL)]
+
 
 def _load_templates_from_file() -> list[dict]:
     """Load assistant templates from the JSON file.
@@ -33,6 +44,7 @@ def _append_assistant_template(
     name: str,
     description: str,
     image_src: str | None = None,
+    icon: str | None = None,
     knowledge_base_id: str | None = None,
     source_file: str | None = None,
     kb_message: str | None = None,
@@ -64,6 +76,8 @@ def _append_assistant_template(
         slug = "".join(ch.lower() for ch in name if ch.isalnum()) or "assistant"
         effective_image_src = f"/{slug}.png"
 
+    effective_icon = icon if icon else _pick_icon(len(templates))
+
     new_entry: dict = {
         "image_src": effective_image_src,
         "title": name,
@@ -72,7 +86,7 @@ def _append_assistant_template(
         "status": "LIVE",
         "queries": "0",
         "gradient": "linear-gradient(to bottom right, #a855f7, #6366f1, #3b82f6)",
-        "icon": "🤖",
+        "icon": effective_icon,
     }
 
     # Include knowledge base metadata if available
@@ -327,9 +341,23 @@ class LayoutState(rx.State):
         self.creation_progress = 0
         self.creation_step = ""
         self.show_assistant_upload = False
+        yield
 
     @rx.event
     def close_assistant_dialog(self):
         """Close the assistant creation alert dialog."""
 
         self.assistant_dialog_open = False
+
+    @rx.event
+    def dismiss_success_toast(self):
+        """Dismiss the assistant-created success toast and reset form state."""
+
+        self.assistant_created = False
+        self.assistant_name = ""
+        self.assistant_description = ""
+        self.assistant_image_src = ""
+        self.creating_assistant = False
+        self.creation_progress = 0
+        self.creation_step = ""
+        self.uploaded_files = []

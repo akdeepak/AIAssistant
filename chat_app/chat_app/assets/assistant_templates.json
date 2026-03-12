@@ -24,15 +24,15 @@
     "kb_documents": 1
   },
   {
-    "image_src": "/policyassitant.png",
+    "image_src": "/policyaiassistant.png",
     "title": "Policy AI Assistant",
-    "description": "The AI Policy Assistant is an intelligent digital assistant designed to help users quickly understand, navigate, and comply with organizational policies and guidelines.",
+    "description": "AI POwered Intelligence",
     "tag_color": "purple-500",
     "status": "LIVE",
     "queries": "0",
     "gradient": "linear-gradient(to bottom right, #a855f7, #6366f1, #3b82f6)",
-    "icon": "\ud83e\udd16",
-    "knowledge_base_id": "7e7f4c7d-ed89-436c-8272-b8cccf654863",
+    "icon": "\ud83e\udde0",
+    "knowledge_base_id": "9ac714fa-1ab3-401c-9d5e-8ccf5d36d717",
     "source_file": "PCSOne New Business Process.docx",
     "kb_message": "Successfully ingested PCSOne New Business Process.docx",
     "kb_documents": 1

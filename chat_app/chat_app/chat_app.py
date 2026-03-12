@@ -103,79 +103,52 @@ def assistant_page() -> rx.Component:
             rx.el.span("⏳", class_name="mr-2"),
             "Creating assistant based on your knowledge base…",
             class_name=(
-                "mb-6 flex items-center rounded-xl border border-blue-200 "
-                "bg-blue-50 px-4 py-3 text-sm text-blue-800"
+                "mb-4 flex items-center rounded-xl border border-purple-200 "
+                "bg-purple-50 px-4 py-3 text-sm text-purple-800"
             ),
         ),
         rx.cond(
             LayoutState.assistant_created,
             rx.el.div(
-                rx.el.span("✅", class_name="mr-2"),
-                "Assistant created successfully! Your bot is ready to use.",
+                # Green check icon
+                rx.el.div(
+                    rx.icon("check", size=22, color="#ffffff"),
+                    class_name=(
+                        "flex-shrink-0 w-10 h-10 rounded-lg bg-green-500 "
+                        "flex items-center justify-center mr-3"
+                    ),
+                ),
+                # Text
+                rx.el.div(
+                    rx.el.p(
+                        "Assistant Created!",
+                        class_name="text-sm font-semibold text-gray-900",
+                    ),
+                    rx.el.p(
+                        rx.el.span(
+                            LayoutState.assistant_name,
+                            class_name="font-semibold text-purple-600",
+                        ),
+                        " is live and ready to go.",
+                        class_name="text-xs text-gray-500 mt-0.5",
+                    ),
+                    class_name="flex-1",
+                ),
+                # Dismiss button
+                rx.el.button(
+                    rx.icon("x", size=16, color="#9CA3AF"),
+                    on_click=LayoutState.dismiss_success_toast,
+                    class_name=(
+                        "flex-shrink-0 p-1 rounded-full "
+                        "hover:bg-gray-100 transition-colors cursor-pointer"
+                    ),
+                ),
                 class_name=(
-                    "mb-6 flex items-center rounded-xl border border-emerald-200 "
-                    "bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
+                    "mb-4 flex items-center rounded-xl border border-purple-100 "
+                    "bg-white shadow-lg shadow-purple-100/50 px-4 py-3"
                 ),
             ),
             rx.el.div(),
-        ),
-    )
-
-    # ── Left hero panel ────────────────────────────────────────────
-    hero_panel = rx.el.div(
-        # Decorative gradient blob
-        rx.el.div(
-            class_name=(
-                "absolute -top-16 -left-16 w-64 h-64 rounded-full "
-                "bg-sky-400 opacity-20 blur-3xl pointer-events-none"
-            ),
-        ),
-        rx.el.div(
-            class_name=(
-                "absolute bottom-0 right-0 w-48 h-48 rounded-full "
-                "bg-blue-600 opacity-10 blur-2xl pointer-events-none"
-            ),
-        ),
-        # Icon badge
-        rx.el.div(
-            rx.el.span("🤖", class_name="text-3xl"),
-            class_name=(
-                "relative z-10 mb-5 flex h-14 w-14 items-center justify-center "
-                "rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20"
-            ),
-        ),
-        # Headline
-        rx.el.h2(
-            "Build your AI Assistant",
-            class_name="relative z-10 text-2xl font-bold text-white mb-3 leading-tight",
-        ),
-        rx.el.p(
-            "Configure a smart assistant powered by your own knowledge base. "
-            "Upload documents, set a persona, and deploy in minutes.",
-            class_name="relative z-10 text-blue-100 text-sm leading-relaxed mb-6",
-        ),
-        # Feature bullets
-        rx.el.ul(
-            rx.el.li(
-                rx.el.span("✦", class_name="mr-2 text-sky-300"),
-                "Custom knowledge base",
-                class_name="flex items-center text-sm text-white/80 mb-3",
-            ),
-            rx.el.li(
-                rx.el.span("✦", class_name="mr-2 text-sky-300"),
-                "Instant deployment",
-                class_name="flex items-center text-sm text-white/80 mb-3",
-            ),
-            rx.el.li(
-                rx.el.span("✦", class_name="mr-2 text-sky-300"),
-                "No code required",
-                class_name="flex items-center text-sm text-white/80",
-            ),
-            class_name="relative z-10 list-none",
-        ),
-        class_name=(
-            "relative overflow-hidden rounded-2xl bg-gradient-to-br "
-            "from-[#1B2A4A] to-[#2E5C8A] p-7 flex flex-col justify-center h-full"
         ),
     )
 
@@ -197,13 +170,13 @@ def assistant_page() -> rx.Component:
                     class_name=(
                         "w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm "
                         "text-gray-900 placeholder-gray-400 "
-                        "focus:outline-none focus:ring-2 focus:ring-[#4A7AB5] "
-                        "focus:border-[#4A7AB5] focus:bg-white transition"
+                        "focus:outline-none focus:ring-2 focus:ring-purple-400 "
+                        "focus:border-purple-400 focus:bg-white transition"
                     ),
                     on_change=LayoutState.set_assistant_name,
                     required=True,
                 ),
-                class_name="mb-5",
+                class_name="mb-3",
             ),
             # Assistant Description
             rx.el.div(
@@ -217,15 +190,15 @@ def assistant_page() -> rx.Component:
                     id="assistant_description",
                     placeholder="Describe the assistant's role, tone, and scope…",
                     class_name=(
-                        "w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm "
-                        "text-gray-900 placeholder-gray-400 min-h-[96px] resize-none "
-                        "focus:outline-none focus:ring-2 focus:ring-[#4A7AB5] "
-                        "focus:border-[#4A7AB5] focus:bg-white transition"
+                        "w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm "
+                        "text-gray-900 placeholder-gray-400 min-h-[72px] resize-none "
+                        "focus:outline-none focus:ring-2 focus:ring-purple-400 "
+                        "focus:border-purple-400 focus:bg-white transition"
                     ),
                     on_change=LayoutState.set_assistant_description,
                     required=True,
                 ),
-                class_name="mb-5",
+                class_name="mb-3",
             ),
             # Two-column row: Avatar + Knowledge Base
             rx.el.div(
@@ -238,13 +211,13 @@ def assistant_page() -> rx.Component:
                     rx.upload(
                         rx.el.div(
                             rx.el.div(
-                                rx.icon("image-plus", size=22, color="#3B6EA5"),
+                                rx.icon("image-plus", size=22, color="#8b5cf6"),
                                 class_name="mb-2",
                             ),
                             rx.el.p(
                                 rx.el.span(
                                     "Click to upload",
-                                    class_name="font-semibold text-[#3B6EA5]",
+                                    class_name="font-semibold text-purple-600",
                                 ),
                                 " or drag & drop",
                                 class_name="text-xs text-gray-500",
@@ -270,9 +243,9 @@ def assistant_page() -> rx.Component:
                             rx.upload_files(upload_id="assistant_image")
                         ),
                         class_name=(
-                            "w-full h-[90px] rounded-xl border-2 border-dashed "
-                            "border-blue-200 bg-blue-50/40 hover:border-[#4A7AB5] "
-                            "hover:bg-blue-50 cursor-pointer transition "
+                            "w-full h-[70px] rounded-xl border-2 border-dashed "
+                            "border-purple-200 bg-purple-50/40 hover:border-purple-400 "
+                            "hover:bg-purple-50 cursor-pointer transition "
                             "flex items-center justify-center"
                         ),
                     ),
@@ -282,7 +255,7 @@ def assistant_page() -> rx.Component:
                             lambda name: rx.el.li(
                                 rx.el.span("📎 ", class_name="mr-1"),
                                 name,
-                                class_name="text-xs text-blue-700 truncate",
+                                class_name="text-xs text-purple-700 truncate",
                             ),
                         ),
                         class_name="mt-1 list-none",
@@ -295,16 +268,16 @@ def assistant_page() -> rx.Component:
                         "Knowledge Base",
                         class_name="block text-sm font-semibold text-gray-700 mb-1.5",
                     ),
-                    rx.upload.root(
+                    rx.upload(
                         rx.el.div(
                             rx.el.div(
-                                rx.icon("cloud-upload", size=22, color="#2563eb"),
+                                rx.icon("cloud-upload", size=22, color="#8b5cf6"),
                                 class_name="mb-2",
                             ),
                             rx.el.p(
                                 rx.el.span(
                                     "Click to upload",
-                                    class_name="font-semibold text-[#3B6EA5]",
+                                    class_name="font-semibold text-purple-600",
                                 ),
                                 " or drag & drop",
                                 class_name="text-xs text-gray-500",
@@ -312,17 +285,20 @@ def assistant_page() -> rx.Component:
                             rx.el.div(
                                 rx.el.span("PDF", class_name="px-1.5 py-0.5 bg-gray-100 rounded text-[10px] text-gray-500 font-medium"),
                                 rx.el.span("DOCX", class_name="px-1.5 py-0.5 bg-gray-100 rounded text-[10px] text-gray-500 font-medium"),
-                                rx.el.span("TXT", class_name="px-1.5 py-0.5 bg-gray-100 rounded text-[10px] text-gray-500 font-medium"),
-                                rx.el.span("CSV", class_name="px-1.5 py-0.5 bg-gray-100 rounded text-[10px] text-gray-500 font-medium"),
                                 class_name="flex gap-1 flex-wrap justify-center mt-1.5",
                             ),
                             class_name="flex flex-col items-center justify-center h-full",
                         ),
                         id="assistant_upload",
+                        max_files=1,
+                        accept={
+                            "application/pdf": [".pdf"],
+                            "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+                        },
                         class_name=(
-                            "w-full h-[90px] rounded-xl border-2 border-dashed "
-                            "border-blue-200 bg-blue-50/40 hover:border-blue-400 "
-                            "hover:bg-blue-50 cursor-pointer transition "
+                            "w-full h-[70px] rounded-xl border-2 border-dashed "
+                            "border-purple-200 bg-purple-50/40 hover:border-purple-400 "
+                            "hover:bg-purple-50 cursor-pointer transition "
                             "flex items-center justify-center"
                         ),
                     ),
@@ -332,108 +308,36 @@ def assistant_page() -> rx.Component:
                             lambda name: rx.el.li(
                                 rx.el.span("📄 ", class_name="mr-1"),
                                 name,
-                                class_name="text-xs text-blue-700 truncate",
+                                class_name="text-xs text-purple-700 truncate",
                             ),
                         ),
                         class_name="mt-1 list-none",
                     ),
                     class_name="flex-1",
                 ),
-                class_name="flex gap-4 mb-5",
+                class_name="flex gap-4 mb-3",
             ),
-            # Submit button + progress bar (pushed to bottom via mt-auto)
+            # Submit button (pushed to bottom via mt-auto)
             rx.el.div(
-                rx.cond(
-                    LayoutState.creating_assistant,
-                    # ── Progress bar overlay ──
-                    rx.el.div(
-                        rx.el.div(
-                            rx.el.div(
-                                rx.icon("loader-circle", size=16, class_name="animate-spin text-[#2E5C8A]"),
-                                rx.el.p(
-                                    LayoutState.creation_step,
-                                    class_name="text-sm font-medium text-gray-700",
-                                ),
-                                class_name="flex items-center gap-2",
-                            ),
-                            rx.el.p(
-                                LayoutState.creation_progress.to(str) + "%",
-                                class_name="text-sm font-semibold text-[#2E5C8A]",
-                            ),
-                            class_name="flex items-center justify-between mb-2",
-                        ),
-                        rx.el.div(
-                            rx.el.div(
-                                class_name="h-full bg-gradient-to-r from-[#2E5C8A] to-[#4A7AB5] rounded-full transition-all duration-500 ease-out",
-                                style={"width": LayoutState.creation_progress.to(str) + "%"},
-                            ),
-                            class_name="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden",
-                        ),
-                        rx.el.div(
-                            rx.el.div(
-                                rx.el.div(
-                                    class_name=rx.cond(
-                                        LayoutState.creation_progress >= 15,
-                                        "size-2.5 rounded-full bg-[#2E5C8A]",
-                                        "size-2.5 rounded-full bg-gray-300",
-                                    ),
-                                ),
-                                rx.el.span("Validate", class_name="text-[10px] text-gray-400 mt-1"),
-                                class_name="flex flex-col items-center",
-                            ),
-                            rx.el.div(
-                                rx.el.div(
-                                    class_name=rx.cond(
-                                        LayoutState.creation_progress >= 35,
-                                        "size-2.5 rounded-full bg-[#2E5C8A]",
-                                        "size-2.5 rounded-full bg-gray-300",
-                                    ),
-                                ),
-                                rx.el.span("Upload", class_name="text-[10px] text-gray-400 mt-1"),
-                                class_name="flex flex-col items-center",
-                            ),
-                            rx.el.div(
-                                rx.el.div(
-                                    class_name=rx.cond(
-                                        LayoutState.creation_progress >= 70,
-                                        "size-2.5 rounded-full bg-[#2E5C8A]",
-                                        "size-2.5 rounded-full bg-gray-300",
-                                    ),
-                                ),
-                                rx.el.span("Index", class_name="text-[10px] text-gray-400 mt-1"),
-                                class_name="flex flex-col items-center",
-                            ),
-                            rx.el.div(
-                                rx.el.div(
-                                    class_name=rx.cond(
-                                        LayoutState.creation_progress >= 100,
-                                        "size-2.5 rounded-full bg-[#2E5C8A]",
-                                        "size-2.5 rounded-full bg-gray-300",
-                                    ),
-                                ),
-                                rx.el.span("Done", class_name="text-[10px] text-gray-400 mt-1"),
-                                class_name="flex flex-col items-center",
-                            ),
-                            class_name="flex justify-between mt-3 px-1",
-                        ),
-                        class_name="w-full py-2",
+                rx.el.button(
+                    rx.el.span("+", class_name="mr-2 text-lg"),
+                    "Create Assistant",
+                    type="button",
+                    disabled=LayoutState.creating_assistant,
+                    on_click=LayoutState.submit_assistant(
+                        rx.upload_files(upload_id="assistant_upload")
                     ),
-                    # ── Normal submit button ──
-                    rx.el.button(
-                        rx.el.span("✦", class_name="mr-2 opacity-70"),
-                        "Create Assistant",
-                        type="button",
-                        on_click=LayoutState.submit_assistant(
-                            rx.upload_files(upload_id="assistant_upload")
-                        ),
-                        class_name=(
-                            "w-full py-3 rounded-xl bg-[#2E5C8A] text-white font-semibold "
-                            "text-sm hover:bg-[#1B2A4A] active:scale-[0.98] transition-all "
-                            "shadow-sm shadow-blue-200 flex items-center justify-center"
-                        ),
+                    class_name=(
+                        "w-full py-3 rounded-full text-white font-semibold "
+                        "text-sm hover:opacity-90 active:scale-[0.98] transition-all "
+                        "shadow-md shadow-purple-200 flex items-center justify-center "
+                        "disabled:opacity-50 disabled:cursor-not-allowed"
                     ),
+                    style={
+                        "background": "linear-gradient(to right, #7c3aed, #a78bfa)",
+                    },
                 ),
-                class_name="mt-auto",
+                class_name="mt-auto flex-shrink-0 pt-2",
             ),
             class_name="flex flex-col flex-1",
         ),
@@ -460,33 +364,333 @@ def assistant_page() -> rx.Component:
     )
 
     # ── Page layout ────────────────────────────────────────────────
-    content = rx.el.div(
-        # Page heading row
+    # ── Header banner (matches screenshot design) ──────────────────
+    header_banner = rx.el.div(
+        # Decorative gradient blobs
         rx.el.div(
+            class_name=(
+                "absolute -right-12 -top-12 w-56 h-56 rounded-full "
+                "opacity-20 pointer-events-none"
+            ),
+            style={
+                "background": "radial-gradient(circle, #c4b5fd 0%, #a78bfa 50%, transparent 70%)",
+            },
+        ),
+        rx.el.div(
+            class_name=(
+                "absolute right-24 bottom-0 w-32 h-32 rounded-full "
+                "opacity-10 pointer-events-none"
+            ),
+            style={
+                "background": "radial-gradient(circle, #8b5cf6 0%, transparent 70%)",
+            },
+        ),
+        # Content row
+        rx.el.div(
+            # Icon badge
+            rx.el.div(
+                rx.icon("bot", size=24, color="#7c3aed"),
+                class_name=(
+                    "flex-shrink-0 w-12 h-12 rounded-xl bg-purple-100 "
+                    "flex items-center justify-center mr-4"
+                ),
+            ),
+            # Text block
             rx.el.div(
                 rx.el.h1(
                     "Assistant Studio",
-                    class_name="text-xl font-bold text-gray-900",
+                    class_name="text-xl font-bold text-gray-900 leading-tight",
                 ),
                 rx.el.p(
-                    "Create and manage your AI assistants",
+                    "Create and manage your AI assistants with custom knowledge bases, personas, and instant deployment.",
                     class_name="text-sm text-gray-500 mt-0.5",
                 ),
+                # Feature pills
+                rx.el.div(
+                    rx.el.span(
+                        rx.el.span("✦", class_name="mr-1.5 text-purple-500"),
+                        "Custom knowledge base",
+                        class_name="inline-flex items-center text-sm text-purple-700 mr-6",
+                    ),
+                    rx.el.span(
+                        rx.el.span("✦", class_name="mr-1.5 text-purple-500"),
+                        "Instant deployment",
+                        class_name="inline-flex items-center text-sm text-purple-700 mr-6",
+                    ),
+                    class_name="flex flex-wrap items-center mt-3",
+                ),
+                class_name="flex-1",
             ),
+            # AI Assistant Builder button
             rx.el.button(
-                rx.icon("plus", size=16, class_name="mr-2"),
+                rx.el.span("+", class_name="mr-2 text-lg font-bold"),
                 "AI Assistant Builder",
                 on_click=LayoutState.open_assistant_upload,
                 class_name=(
-                    "inline-flex items-center px-5 py-2.5 rounded-xl "
-                    "bg-[#2E5C8A] text-white text-sm font-semibold "
-                    "hover:bg-[#1B2A4A] transition-colors shadow-sm"
+                    "flex-shrink-0 inline-flex items-center px-6 py-3 rounded-xl "
+                    "text-white text-sm font-semibold "
+                    "hover:opacity-90 active:scale-[0.98] transition-all "
+                    "shadow-lg shadow-purple-200/50 cursor-pointer"
+                ),
+                style={
+                    "background": "linear-gradient(135deg, #8b5cf6, #a344f0)",
+                },
+            ),
+            class_name="relative z-10 flex items-center w-full",
+        ),
+        class_name="relative overflow-hidden rounded-2xl px-6 py-3 mb-3",
+        style={
+            "background": "linear-gradient(135deg, #f5f0ff 0%, #ece4fa 40%, #e8ddf8 70%, #f0eafc 100%)",
+        },
+    )
+
+    # ── Left hero panel ────────────────────────────────────────────
+    hero_panel = rx.el.div(
+        # Decorative gradient blob
+        rx.el.div(
+            class_name=(
+                "absolute -top-16 -left-16 w-64 h-64 rounded-full "
+                "bg-purple-400 opacity-20 blur-3xl pointer-events-none"
+            ),
+        ),
+        rx.el.div(
+            class_name=(
+                "absolute bottom-0 right-0 w-48 h-48 rounded-full "
+                "bg-fuchsia-500 opacity-15 blur-2xl pointer-events-none"
+            ),
+        ),
+        # Icon badge
+        rx.el.div(
+            rx.el.span("🤖", class_name="text-2xl"),
+            class_name=(
+                "relative z-10 mb-3 flex h-11 w-11 items-center justify-center "
+                "rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20"
+            ),
+        ),
+        # Headline
+        rx.el.h2(
+            "Build your AI Assistant",
+            class_name="relative z-10 text-xl font-bold text-white mb-2 leading-tight",
+        ),
+        rx.el.p(
+            "Configure a smart assistant powered by your own knowledge base. "
+            "Upload documents, set a persona, and deploy in minutes.",
+            class_name="relative z-10 text-purple-100 text-xs leading-relaxed mb-3",
+        ),
+        # Feature bullets
+        rx.el.ul(
+            rx.el.li(
+                rx.el.span("✦", class_name="mr-2 text-purple-300"),
+                "Custom knowledge base",
+                class_name="flex items-center text-xs text-white/80 mb-2",
+            ),
+            rx.el.li(
+                rx.el.span("✦", class_name="mr-2 text-purple-300"),
+                "Instant deployment",
+                class_name="flex items-center text-xs text-white/80 mb-2",
+            ),
+            rx.el.li(
+                rx.el.span("✦", class_name="mr-2 text-purple-300"),
+                "No code required",
+                class_name="flex items-center text-xs text-white/80",
+            ),
+            class_name="relative z-10 list-none",
+        ),
+        class_name="relative overflow-hidden rounded-2xl p-5 flex flex-col justify-center h-full",
+        style={
+            "background": (
+                "linear-gradient(135deg, "
+                "#7c3aed 0%, #8b5cf6 30%, #a78bfa 55%, "
+                "#c4b5fd 80%, #ddd6fe 100%)"
+            ),
+        },
+    )
+
+    # ── Full-page progress overlay ──────────────────────────────
+    progress_overlay = rx.cond(
+        LayoutState.creating_assistant,
+        rx.el.div(
+            # Backdrop
+            rx.el.div(
+                # Centered card
+                rx.el.div(
+                    # Animated icon
+                    rx.el.div(
+                        rx.el.div(
+                            rx.icon("bot", size=28, color="#7c3aed"),
+                            class_name=(
+                                "w-16 h-16 rounded-2xl bg-purple-100 "
+                                "flex items-center justify-center mb-5"
+                            ),
+                        ),
+                        class_name="flex justify-center",
+                    ),
+                    # Step text + percentage
+                    rx.el.div(
+                        rx.el.p(
+                            LayoutState.creation_step,
+                            class_name="text-base font-semibold text-gray-800 text-center",
+                        ),
+                        rx.el.p(
+                            LayoutState.creation_progress.to(str) + "%",
+                            class_name="text-2xl font-bold text-purple-600 text-center mt-1",
+                        ),
+                        class_name="mb-5",
+                    ),
+                    # Progress bar
+                    rx.el.div(
+                        rx.el.div(
+                            class_name="h-full rounded-full transition-all duration-500 ease-out",
+                            style={
+                                "background": "linear-gradient(to right, #7c3aed, #a78bfa)",
+                                "width": LayoutState.creation_progress.to(str) + "%",
+                            },
+                        ),
+                        class_name="w-full h-3 bg-gray-100 rounded-full overflow-hidden mb-6",
+                    ),
+                    # Step dots
+                    rx.el.div(
+                        # Validate
+                        rx.el.div(
+                            rx.el.div(
+                                rx.cond(
+                                    LayoutState.creation_progress >= 15,
+                                    rx.icon("check", size=12, color="white"),
+                                    rx.el.div(class_name="w-2 h-2 rounded-full bg-white"),
+                                ),
+                                class_name=rx.cond(
+                                    LayoutState.creation_progress >= 15,
+                                    "w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center",
+                                    "w-7 h-7 rounded-full bg-gray-300 flex items-center justify-center",
+                                ),
+                            ),
+                            rx.el.span(
+                                "Validate",
+                                class_name=rx.cond(
+                                    LayoutState.creation_progress >= 15,
+                                    "text-xs text-purple-600 font-medium mt-1.5",
+                                    "text-xs text-gray-400 mt-1.5",
+                                ),
+                            ),
+                            class_name="flex flex-col items-center",
+                        ),
+                        # Connector line
+                        rx.el.div(
+                            class_name=rx.cond(
+                                LayoutState.creation_progress >= 35,
+                                "flex-1 h-0.5 bg-purple-600 mt-3.5",
+                                "flex-1 h-0.5 bg-gray-200 mt-3.5",
+                            ),
+                        ),
+                        # Upload
+                        rx.el.div(
+                            rx.el.div(
+                                rx.cond(
+                                    LayoutState.creation_progress >= 35,
+                                    rx.icon("check", size=12, color="white"),
+                                    rx.el.div(class_name="w-2 h-2 rounded-full bg-white"),
+                                ),
+                                class_name=rx.cond(
+                                    LayoutState.creation_progress >= 35,
+                                    "w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center",
+                                    "w-7 h-7 rounded-full bg-gray-300 flex items-center justify-center",
+                                ),
+                            ),
+                            rx.el.span(
+                                "Upload",
+                                class_name=rx.cond(
+                                    LayoutState.creation_progress >= 35,
+                                    "text-xs text-purple-600 font-medium mt-1.5",
+                                    "text-xs text-gray-400 mt-1.5",
+                                ),
+                            ),
+                            class_name="flex flex-col items-center",
+                        ),
+                        # Connector line
+                        rx.el.div(
+                            class_name=rx.cond(
+                                LayoutState.creation_progress >= 70,
+                                "flex-1 h-0.5 bg-purple-600 mt-3.5",
+                                "flex-1 h-0.5 bg-gray-200 mt-3.5",
+                            ),
+                        ),
+                        # Index
+                        rx.el.div(
+                            rx.el.div(
+                                rx.cond(
+                                    LayoutState.creation_progress >= 70,
+                                    rx.icon("check", size=12, color="white"),
+                                    rx.el.div(class_name="w-2 h-2 rounded-full bg-white"),
+                                ),
+                                class_name=rx.cond(
+                                    LayoutState.creation_progress >= 70,
+                                    "w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center",
+                                    "w-7 h-7 rounded-full bg-gray-300 flex items-center justify-center",
+                                ),
+                            ),
+                            rx.el.span(
+                                "Index",
+                                class_name=rx.cond(
+                                    LayoutState.creation_progress >= 70,
+                                    "text-xs text-purple-600 font-medium mt-1.5",
+                                    "text-xs text-gray-400 mt-1.5",
+                                ),
+                            ),
+                            class_name="flex flex-col items-center",
+                        ),
+                        # Connector line
+                        rx.el.div(
+                            class_name=rx.cond(
+                                LayoutState.creation_progress >= 100,
+                                "flex-1 h-0.5 bg-purple-600 mt-3.5",
+                                "flex-1 h-0.5 bg-gray-200 mt-3.5",
+                            ),
+                        ),
+                        # Done
+                        rx.el.div(
+                            rx.el.div(
+                                rx.cond(
+                                    LayoutState.creation_progress >= 100,
+                                    rx.icon("check", size=12, color="white"),
+                                    rx.el.div(class_name="w-2 h-2 rounded-full bg-white"),
+                                ),
+                                class_name=rx.cond(
+                                    LayoutState.creation_progress >= 100,
+                                    "w-7 h-7 rounded-full bg-green-500 flex items-center justify-center",
+                                    "w-7 h-7 rounded-full bg-gray-300 flex items-center justify-center",
+                                ),
+                            ),
+                            rx.el.span(
+                                "Done",
+                                class_name=rx.cond(
+                                    LayoutState.creation_progress >= 100,
+                                    "text-xs text-green-600 font-medium mt-1.5",
+                                    "text-xs text-gray-400 mt-1.5",
+                                ),
+                            ),
+                            class_name="flex flex-col items-center",
+                        ),
+                        class_name="flex items-start w-full",
+                    ),
+                    class_name=(
+                        "bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md "
+                        "animate-in fade-in zoom-in-95"
+                    ),
+                ),
+                class_name=(
+                    "fixed inset-0 z-50 flex items-center justify-center "
+                    "bg-black/40 backdrop-blur-sm"
                 ),
             ),
-            class_name="flex items-center justify-between mb-8",
         ),
+        rx.el.div(),
+    )
+
+    content = rx.el.div(
+        header_banner,
         status_banner,
-        # Two-column card
+        progress_overlay,
+        # Two-column card (hero left + form right)
         rx.cond(
             LayoutState.show_assistant_upload,
             rx.el.div(
@@ -507,16 +711,16 @@ def assistant_page() -> rx.Component:
                             class_name="text-sm text-gray-400 mb-4",
                         ),
                         form_panel,
-                        class_name="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 h-full flex flex-col",
+                        class_name="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 h-full flex flex-col",
                     ),
                     class_name="flex-1",
                 ),
                 assistant_dialog,
-                class_name="flex flex-col lg:flex-row gap-6 items-stretch flex-1 min-h-0",
+                class_name="flex flex-col lg:flex-row gap-4 items-stretch flex-1 min-h-0",
             ),
             rx.el.div(),
         ),
-        class_name="w-full p-6 h-screen bg-gray-50 overflow-hidden flex flex-col",
+        class_name="w-full p-4 h-screen bg-white overflow-y-auto flex flex-col",
     )
 
     return rx.hstack(sidebar(), rx.box(content, width="100%"))
@@ -547,14 +751,15 @@ def agent_card(template: dict) -> rx.Component:
 
     # Card content
     card_content = rx.el.div(
-        # Gradient header with circular image avatar
+        # Gradient header with icon avatar
         rx.el.div(
             status_badge,
-            rx.el.img(
-                src=template["image_src"],
+            rx.el.div(
+                rx.el.span(template["icon"], class_name="text-2xl"),
                 class_name=(
                     "absolute bottom-3 left-1/2 -translate-x-1/2 "
-                    "w-14 h-14 rounded-full object-cover border-2 border-white/40 shadow-md"
+                    "w-14 h-14 rounded-full flex items-center justify-center "
+                    "bg-white/20 backdrop-blur-sm border-2 border-white/40 shadow-md"
                 ),
             ),
             class_name="relative h-28 rounded-t-xl",
@@ -579,7 +784,7 @@ def agent_card(template: dict) -> rx.Component:
         ),
         class_name=(
             "bg-white rounded-xl border border-gray-100 shadow-sm "
-            "hover:shadow-md transition-shadow overflow-hidden flex flex-col cursor-pointer"
+            "hover:shadow-md transition-shadow overflow-hidden flex flex-col cursor-pointer h-full"
         ),
         # Select the assistant when clicked
         on_click=ChatState.select_assistant(template.get("knowledge_base_id")),
@@ -589,7 +794,7 @@ def agent_card(template: dict) -> rx.Component:
     return rx.link(
         card_content,
         href="/chat",
-        class_name="block",
+        class_name="block h-full",
     )
 
 
@@ -670,33 +875,71 @@ def dashboard_page() -> rx.Component:
 
     # ── Hero Section ───────────────────────────────────────────────
     hero_section = rx.el.div(
-        # Left content
+        # ── Decorative: large purple orb (right side) ──
+        rx.el.div(
+            class_name="absolute -right-10 -top-10 w-[300px] h-[300px] rounded-full opacity-80 pointer-events-none",
+            style={
+                "background": (
+                    "radial-gradient(circle at 40% 40%, "
+                    "#c4b5fd 0%, #8b5cf6 35%, #6d28d9 65%, #4c1d95 100%)"
+                ),
+            },
+        ),
+        # ── Decorative: inner glow highlight on orb ──
+        rx.el.div(
+            class_name="absolute right-8 top-4 w-[110px] h-[110px] rounded-full opacity-50 pointer-events-none",
+            style={
+                "background": "radial-gradient(circle, #ede9fe 0%, transparent 70%)",
+            },
+        ),
+        # ── Decorative: dot grid pattern (bottom-right) ──
+        rx.el.div(
+            class_name="absolute bottom-4 right-32 opacity-30 pointer-events-none",
+            style={
+                "width": "90px",
+                "height": "70px",
+                "backgroundImage": "radial-gradient(circle, #7c3aed 1.2px, transparent 1.2px)",
+                "backgroundSize": "12px 12px",
+            },
+        ),
+        # ── Left content ──
         rx.el.div(
             rx.el.span(
-                "✦  AGENTIC AI PLATFORM",
+                "✦  AGENTIC AI ASSISTANT  ✦",
                 class_name=(
                     "inline-block px-4 py-1 text-[10px] font-bold tracking-[0.2em] "
-                    "text-white bg-white/15 backdrop-blur-sm rounded-full mb-3"
+                    "text-purple-700 bg-purple-100/60 backdrop-blur-sm rounded-full mb-3 "
+                    "border border-purple-200/50"
                 ),
             ),
             rx.el.h1(
                 rx.el.span("Your intelligent", class_name="block"),
-                rx.el.span("agents, deployed.", class_name="block"),
-                class_name="text-2xl md:text-3xl font-bold text-white leading-tight mb-2",
+                rx.el.span(
+                    "agents, ",
+                    rx.el.em("deployed.", class_name="italic"),
+                    class_name="block",
+                ),
+                class_name="text-2xl md:text-3xl font-bold leading-tight mb-2",
+                style={"color": "#1e1b4b", "fontFamily": "'Georgia', 'Times New Roman', serif"},
             ),
             rx.el.p(
-                "Build, configure, and launch AI assistants tailored to your "
-                "insurance products and workflows.",
-                class_name="text-white/80 text-sm leading-relaxed max-w-md mb-4",
+                "Deploy intelligent assistants that understand policies, "
+                "handle queries, and insurance products — without writing a "
+                "line of code.",
+                class_name="text-gray-500 text-sm leading-relaxed max-w-lg mb-4",
             ),
+            # ── Buttons ──
             rx.el.div(
                 rx.link(
                     rx.el.button(
                         "Get Started",
                         class_name=(
-                            "px-6 py-2.5 text-sm font-semibold text-purple-700 bg-white "
-                            "rounded-lg hover:bg-gray-100 transition-colors"
+                            "px-6 py-2.5 text-sm font-semibold text-white "
+                            "rounded-full hover:opacity-90 transition-opacity cursor-pointer"
                         ),
+                        style={
+                            "background": "linear-gradient(135deg, #7c3aed, #6d28d9)",
+                        },
                     ),
                     href="/assistant-studio",
                 ),
@@ -704,9 +947,9 @@ def dashboard_page() -> rx.Component:
                     rx.el.button(
                         "View Templates",
                         class_name=(
-                            "px-6 py-2.5 text-sm font-semibold text-white "
-                            "bg-white/20 backdrop-blur-sm "
-                            "rounded-lg hover:bg-white/30 transition-colors ml-3"
+                            "px-6 py-2.5 text-sm font-semibold text-gray-700 bg-white "
+                            "border border-gray-200 "
+                            "rounded-full hover:bg-gray-50 transition-colors ml-3 cursor-pointer"
                         ),
                     ),
                     href="#",
@@ -715,84 +958,123 @@ def dashboard_page() -> rx.Component:
             ),
             class_name="flex-1 z-10",
         ),
-        # Right: Stats cards
+        # ── Stats cards (center-right, floating) ──
         rx.el.div(
             rx.el.div(
                 rx.el.p(
                     LayoutState.assistant_templates.length(),
-                    class_name="text-2xl font-bold text-white",
+                    class_name="text-2xl font-bold",
+                    style={"color": "#1e1b4b"},
                 ),
-                rx.el.p("Agents\nLive", class_name="text-[10px] text-white/60 mt-0.5 text-center whitespace-pre-line"),
-                class_name=(
-                    "text-center px-4 py-3 bg-white/10 backdrop-blur-sm rounded-2xl "
-                    "border border-white/20"
+                rx.el.p(
+                    "AGENTS LIVE",
+                    class_name="text-[9px] font-semibold tracking-wider mt-0.5",
+                    style={"color": "#9ca3af"},
                 ),
-            ),
-            rx.el.div(
-                rx.el.p("12k", class_name="text-2xl font-bold text-white"),
-                rx.el.p("Queries", class_name="text-[10px] text-white/60 mt-0.5"),
                 class_name=(
-                    "text-center px-4 py-3 bg-white/10 backdrop-blur-sm rounded-2xl "
-                    "border border-white/20"
+                    "text-center px-4 py-3 bg-white/70 backdrop-blur-md rounded-xl "
+                    "border border-white/80 shadow-lg"
                 ),
             ),
             rx.el.div(
-                rx.el.p("99%", class_name="text-2xl font-bold text-white"),
-                rx.el.p("Uptime", class_name="text-[10px] text-white/60 mt-0.5"),
+                rx.el.p(
+                    "12k",
+                    class_name="text-2xl font-bold",
+                    style={"color": "#1e1b4b"},
+                ),
+                rx.el.p(
+                    "QUERIES",
+                    class_name="text-[9px] font-semibold tracking-wider mt-0.5",
+                    style={"color": "#9ca3af"},
+                ),
                 class_name=(
-                    "text-center px-4 py-3 bg-white/10 backdrop-blur-sm rounded-2xl "
-                    "border border-white/20"
+                    "text-center px-4 py-3 bg-white/70 backdrop-blur-md rounded-xl "
+                    "border border-white/80 shadow-lg"
+                ),
+            ),
+            rx.el.div(
+                rx.el.p(
+                    "99%",
+                    class_name="text-2xl font-bold",
+                    style={"color": "#1e1b4b"},
+                ),
+                rx.el.p(
+                    "UPTIME",
+                    class_name="text-[9px] font-semibold tracking-wider mt-0.5",
+                    style={"color": "#9ca3af"},
+                ),
+                class_name=(
+                    "text-center px-4 py-3 bg-white/70 backdrop-blur-md rounded-xl "
+                    "border border-white/80 shadow-lg"
                 ),
             ),
             class_name="flex gap-3 z-10",
         ),
+        # ── Bottom curved wave ──
+        rx.el.div(
+            class_name="absolute bottom-0 left-0 w-full h-8 pointer-events-none",
+            style={
+                "background": "white",
+                "borderRadius": "100% 100% 0 0 / 100% 100% 0 0",
+                "transform": "translateY(50%)",
+            },
+        ),
         class_name=(
             "relative flex flex-col lg:flex-row items-start lg:items-center justify-between "
-            "gap-6 p-6 rounded-2xl mb-4 overflow-hidden"
+            "gap-4 px-8 py-6 rounded-2xl mb-3 overflow-hidden"
         ),
         style={
             "background": (
                 "linear-gradient(135deg, "
-                "#7c3aed 0%, #a855f7 25%, #c084fc 45%, "
-                "#e879a0 70%, #f59e42 100%)"
+                "#f3f0ff 0%, #ede9fe 30%, #ddd6fe 60%, "
+                "#c4b5fd 85%, #a78bfa 100%)"
             ),
         },
     )
 
     # ── Tab Navigation ─────────────────────────────────────────────
     tabs_section = rx.el.div(
-        rx.el.button(
-            "All Agents",
-            class_name="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-full",
-        ),
-        rx.el.button(
-            "Deployed",
+        rx.el.div(
+            rx.el.button(
+                "All Agents",
+                class_name=(
+                    "px-5 py-2 text-sm font-semibold text-white rounded-full"
+                ),
+                style={"background": "linear-gradient(to right, #7c3aed, #6d28d9)"},
+            ),
+            rx.el.button(
+                "Deployed",
+                class_name=(
+                    "px-5 py-2 text-sm font-medium text-purple-900/70 bg-transparent "
+                    "hover:bg-purple-100 rounded-full transition-colors"
+                ),
+            ),
+            rx.el.button(
+                "Drafts",
+                class_name=(
+                    "px-5 py-2 text-sm font-medium text-purple-900/70 bg-transparent "
+                    "hover:bg-purple-100 rounded-full transition-colors"
+                ),
+            ),
+            rx.el.button(
+                "Templates",
+                class_name=(
+                    "px-5 py-2 text-sm font-medium text-purple-900/70 bg-transparent "
+                    "hover:bg-purple-100 rounded-full transition-colors"
+                ),
+            ),
             class_name=(
-                "px-4 py-2 text-sm font-medium text-gray-600 bg-transparent "
-                "hover:bg-gray-100 rounded-full transition-colors"
+                "inline-flex items-center gap-1 px-1.5 py-1.5 "
+                "bg-purple-100/60 rounded-full border border-purple-200/50"
             ),
         ),
-        rx.el.button(
-            "Drafts",
-            class_name=(
-                "px-4 py-2 text-sm font-medium text-gray-600 bg-transparent "
-                "hover:bg-gray-100 rounded-full transition-colors"
-            ),
-        ),
-        rx.el.button(
-            "Templates",
-            class_name=(
-                "px-4 py-2 text-sm font-medium text-gray-600 bg-transparent "
-                "hover:bg-gray-100 rounded-full transition-colors"
-            ),
-        ),
-        class_name="flex items-center gap-1 mb-4",
+        class_name="mb-3",
     )
 
     # ── Agent Cards Section (Dynamic from templates) ───────────────
     agents_section = rx.el.div(
         rx.foreach(LayoutState.assistant_templates, agent_card),
-        class_name="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl",
+        class_name="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 max-w-5xl auto-rows-fr",
     )
 
     # ── Main Content ───────────────────────────────────────────────
@@ -802,9 +1084,9 @@ def dashboard_page() -> rx.Component:
             hero_section,
             tabs_section,
             agents_section,
-            class_name="p-5",
+            class_name="p-4",
         ),
-        class_name="w-full bg-[#F3F0FF] h-screen overflow-hidden",
+        class_name="w-full bg-[#F3F0FF] h-screen overflow-y-auto",
     )
 
     return rx.hstack(sidebar(), rx.box(content, width="100%"))
@@ -815,7 +1097,7 @@ def index() -> rx.Component:
 
 
 app = rx.App(theme=rx.theme(appearance="light"))
-app.add_page(index, route="/", title="Dashboard")
+app.add_page(index, route="/", title="Dashboard", on_load=LayoutState.load_templates)
 
 
 def chat_page() -> rx.Component:
