@@ -8,7 +8,7 @@ def template_card(
     image_src: str,
     title: str,
     description: str,
-    tag_color: str = "purple-500",
+    tag_color: str = "#a855f7",
     knowledge_base_id: str | None = None,
 ) -> rx.Component:
     """Large template-style card with image, title, and tag.
@@ -35,7 +35,8 @@ def template_card(
                 ),
                 rx.el.div(
                     rx.el.span(
-                        class_name=f"inline-flex h-3 w-3 rounded-full bg-{tag_color} mr-2",
+                        class_name="inline-flex h-3 w-3 rounded-full mr-2",
+                        style={"background_color": tag_color},
                     ),
                     rx.el.span(
                         description,

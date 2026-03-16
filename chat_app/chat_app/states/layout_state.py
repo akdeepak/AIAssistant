@@ -18,10 +18,48 @@ _ICON_POOL: list[str] = [
     "⚡", "🎯", "📚", "🔧", "💬", "🌐", "🏷️", "📎",
 ]
 
+# Pool of theme-appropriate hex colours cycled through for template cards.
+_COLOR_POOL: list[str] = [
+    "#a855f7",  # purple
+    "#6366f1",  # indigo
+    "#3b82f6",  # blue
+    "#06b6d4",  # cyan
+    "#14b8a6",  # teal
+    "#10b981",  # emerald
+    "#8b5cf6",  # violet
+    "#ec4899",  # pink
+    "#f59e0b",  # amber
+    "#ef4444",  # red
+]
+
+# Pool of visually distinct gradients cycled through for card headers.
+_GRADIENT_POOL: list[str] = [
+    "linear-gradient(to bottom right, #1e1b4b, #312e81, #4c1d95)",   # deep indigo
+    "linear-gradient(to bottom right, #06b6d4, #3b82f6, #6366f1)",   # cyan → blue
+    "linear-gradient(to bottom right, #a855f7, #6366f1, #3b82f6)",   # purple → blue
+    "linear-gradient(to bottom right, #ec4899, #f43f5e, #f97316)",   # pink → orange
+    "linear-gradient(to bottom right, #10b981, #14b8a6, #06b6d4)",   # emerald → cyan
+    "linear-gradient(to bottom right, #f59e0b, #f97316, #ef4444)",   # amber → red
+    "linear-gradient(to bottom right, #8b5cf6, #a855f7, #ec4899)",   # violet → pink
+    "linear-gradient(to bottom right, #0ea5e9, #6366f1, #7c3aed)",   # sky → violet
+    "linear-gradient(to bottom right, #059669, #10b981, #34d399)",   # green shades
+    "linear-gradient(to bottom right, #7c3aed, #6d28d9, #4c1d95)",   # rich purple
+]
+
 
 def _pick_icon(existing_count: int) -> str:
     """Return an icon from the pool based on how many templates exist."""
     return _ICON_POOL[existing_count % len(_ICON_POOL)]
+
+
+def _pick_color(existing_count: int) -> str:
+    """Return a hex colour from the pool based on how many templates exist."""
+    return _COLOR_POOL[existing_count % len(_COLOR_POOL)]
+
+
+def _pick_gradient(existing_count: int) -> str:
+    """Return a gradient string from the pool based on how many templates exist."""
+    return _GRADIENT_POOL[existing_count % len(_GRADIENT_POOL)]
 
 
 def _load_templates_from_file() -> list[dict]:
@@ -77,15 +115,17 @@ def _append_assistant_template(
         effective_image_src = f"/{slug}.png"
 
     effective_icon = icon if icon else _pick_icon(len(templates))
+    effective_color = _pick_color(len(templates))
+    effective_gradient = _pick_gradient(len(templates))
 
     new_entry: dict = {
         "image_src": effective_image_src,
         "title": name,
         "description": description,
-        "tag_color": "purple-500",
+        "tag_color": effective_color,
         "status": "LIVE",
         "queries": "0",
-        "gradient": "linear-gradient(to bottom right, #a855f7, #6366f1, #3b82f6)",
+        "gradient": effective_gradient,
         "icon": effective_icon,
     }
 
