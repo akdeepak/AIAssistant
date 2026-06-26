@@ -1,0 +1,54 @@
+[
+  {
+    "image_src": "/fleetassistant.png",
+    "title": "Fleet AI Assistant",
+    "description": "An AI-powered assistant that instantly answers questions about fleet insurance policies, endorsements, and coverage",
+    "tag_color": "#a855f7",
+    "status": "LIVE",
+    "queries": "8.2k",
+    "gradient": "linear-gradient(to bottom right, #1e1b4b, #312e81, #4c1d95)",
+    "icon": "\ud83e\udd16"
+  },
+  {
+    "image_src": "/policcyfaq.png",
+    "title": "Policcy FAQ",
+    "description": "AI Powered Assistant to answer the queries on hte FAQ document",
+    "tag_color": "#6366f1",
+    "status": "LIVE",
+    "queries": "0",
+    "gradient": "linear-gradient(to bottom right, #06b6d4, #3b82f6, #6366f1)",
+    "icon": "\ud83d\udccb",
+    "knowledge_base_id": "c1f7cd89-717e-4e3e-bb08-edd95db22e5a",
+    "source_file": "Broker_FAQ_doc.docx",
+    "kb_message": "Successfully ingested Broker_FAQ_doc.docx",
+    "kb_documents": 1
+  },
+  {
+    "image_src": "/fleetpolicyaiassistant.png",
+    "title": "Fleet Policy AI Assistant",
+    "description": "AI Powered Intelligence to answer the queries on the AI Fleet Policy AI Assistant more precisely and accurately",
+    "tag_color": "#3b82f6",
+    "status": "LIVE",
+    "queries": "0",
+    "gradient": "linear-gradient(to bottom right, #a855f7, #6366f1, #3b82f6)",
+    "icon": "\ud83e\udde0",
+    "knowledge_base_id": "ecbb3d6b-072d-4e8c-870d-ca9db52828bb",
+    "source_file": "Fleet-policy-wordings.pdf",
+    "kb_message": "Successfully ingested Fleet-policy-wordings.pdf",
+    "kb_documents": 241
+  },
+  {
+    "image_src": "/fleeticiciaipolicywordingassistant.png",
+    "title": "Fleet ICICI AI Policy Wording Assistant",
+    "description": "AI Powered Intelligence to answer the queries on the tables subsection of the insurance fleet wording document",
+    "tag_color": "#06b6d4",
+    "status": "LIVE",
+    "queries": "0",
+    "gradient": "linear-gradient(to bottom right, #ec4899, #f43f5e, #f97316)",
+    "icon": "\ud83d\udca1",
+    "knowledge_base_id": "ae261435-e33e-4ab3-b334-e19e45d2bef8",
+    "source_file": "Fleet-policy-wordings.pdf",
+    "kb_message": "Successfully ingested Fleet-policy-wordings.pdf",
+    "kb_documents": 241
+  }
+]
