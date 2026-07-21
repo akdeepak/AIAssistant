@@ -105,7 +105,7 @@ def _append_assistant_template(
     if image_src is not None and image_src != "":
         if image_src.startswith("/_upload/"):
             # Keep only the file name and point to the root path, e.g.
-            # "/_upload/instanda_logo1.png" -> "/instanda_logo1.png".
+            # "/_upload/agentiq_logo1.png" -> "/agentiq_logo1.png".
             effective_image_src = f"/{Path(image_src).name}"
         else:
             effective_image_src = image_src

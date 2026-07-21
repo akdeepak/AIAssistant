@@ -84,6 +84,13 @@ def get_faq_vector_service():
 
 
 @lru_cache(maxsize=1)
+def get_azure_document_service():
+    from app.services.azure_document_service import AzureDocumentService
+
+    return AzureDocumentService()
+
+
+@lru_cache(maxsize=1)
 def get_kb_ingestion_service():
     from app.knowledge_base.services import KnowledgeBaseIngestionService
 

@@ -76,7 +76,7 @@ def preset_cards() -> rx.Component:
                 ),
             ),
             rx.el.p(
-                "Instanda AI Agentic Assistant",
+                "AgentiQ AI Agentic Assistant",
                 class_name="text-2xl md:text-3xl font-medium",
             ),
             class_name="text-black flex flex-row gap-4 items-center mb-6",

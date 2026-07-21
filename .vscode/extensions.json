@@ -1,8 +1,0 @@
-{
-  "recommendations": [
-    "ms-python.python",
-    "charliermarsh.ruff",
-    "esbenp.prettier-vscode",
-    "yzhang.markdown-all-in-one"
-  ]
-}

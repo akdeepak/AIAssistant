@@ -77,5 +77,24 @@ class AppSettings:
         default_factory=lambda: os.getenv("QDRANT_COLLECTION_PREFIX", "kb")
     )
 
+    AZURE_BLOB_CONNECTION_STRING: str = field(
+        default_factory=lambda: os.getenv("AZURE_BLOB_CONNECTION_STRING", "")
+    )
+    AZURE_BLOB_CONTAINER_NAME: str = field(
+        default_factory=lambda: os.getenv("AZURE_BLOB_CONTAINER_NAME", "documents")
+    )
+    AZURE_SEARCH_ENDPOINT: str = field(
+        default_factory=lambda: os.getenv("AZURE_SEARCH_ENDPOINT", "")
+    )
+    AZURE_SEARCH_API_KEY: str = field(
+        default_factory=lambda: os.getenv("AZURE_SEARCH_API_KEY", "")
+    )
+    AZURE_SEARCH_INDEX_NAME: str = field(
+        default_factory=lambda: os.getenv(
+            "AZURE_SEARCH_INDEX_NAME",
+            "ai-assistant-documents",
+        )
+    )
+
 
 settings = AppSettings()

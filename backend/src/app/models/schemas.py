@@ -29,6 +29,11 @@ class FAQVectorQueryRequest(BaseModel):
     query: str = Field(..., min_length=1, description="Natural language FAQ query.")
 
 
+class AzureDocumentQueryRequest(BaseModel):
+    query: str = Field(..., min_length=1, description="Natural language query.")
+    top_k: int = Field(5, ge=1, le=20)
+
+
 class KBQueryRequest(BaseModel):
     query: str = Field(..., min_length=1, description="Natural language query.")
     top_k: int = Field(5, ge=1, le=50)

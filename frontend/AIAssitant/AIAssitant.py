@@ -15,8 +15,8 @@
 #         # Sidebar (left stack)
 #         rx.vstack(
 #             rx.image(
-#                 # src="/assets/instanda_logo.png",  # Update to your logo path if needed
-#                 src=rx.asset("instanda_new.png"),  # Use Reflex's asset management
+#                 # src="/assets/agentiq_logo.png",  # Update to your logo path if needed
+#                 src=rx.asset("agentiq_new.png"),  # Use Reflex's asset management
 #                 width="150px",
 #                 alt="Logo",
 #                 style={"marginBottom": "2rem"},

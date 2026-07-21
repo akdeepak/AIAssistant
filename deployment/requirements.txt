@@ -10,14 +10,16 @@ scikit-learn
 requests
 python-dotenv
 pytest
-docker-compose
 pillow
 sentence-transformers
 qdrant-client
 pinecone-client
 azure-ai-textanalytics
 azure-cognitiveservices-vision-computervision
+azure-search-documents
+azure-storage-blob
 transformers
+PyYAML>=6.0
 PyMuPDF
 pypdf
 unstructured[pdf]

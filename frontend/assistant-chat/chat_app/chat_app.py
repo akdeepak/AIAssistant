@@ -43,10 +43,9 @@ def sidebar() -> rx.Component:
             rx.vstack(
                 rx.hstack(
                     rx.image(
-                        src="/logo.png",
-                        width="50.25em",
+                        src="/logo.svg",
+                        width="320px",
                         height="auto",
-                        border_radius="25%",
                     ),
                     align="center",
                     justify="start",
@@ -820,7 +819,7 @@ def dashboard_page() -> rx.Component:
     header_bar = rx.el.div(
         # Left: Brand
         rx.el.div(
-            rx.el.span("Instanda", class_name="text-lg font-bold", style={"color": "#1a1a2e"}),
+            rx.el.span("AgentiQ", class_name="text-lg font-bold", style={"color": "#1a1a2e"}),
             rx.el.span("/", class_name="mx-3 text-lg", style={"color": "#ddd"}),
             rx.el.span("AI Studio", class_name="text-lg font-normal", style={"color": "#8e8ea0"}),
             class_name="flex items-center",
